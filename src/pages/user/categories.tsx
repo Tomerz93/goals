@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 
-const GoalsSettings: NextPage = () => {
+const SelectCategories: NextPage = () => {
   return <div>Goals settings - categories selection</div>;
 };
 
-export default GoalsSettings;
+export default SelectCategories;
