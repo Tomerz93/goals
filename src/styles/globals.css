@@ -6,7 +6,6 @@
 
 :root {
   /* color definitions */
-
   --red: hsl(0, 61%, 65%);
   --green: hsl(130, 61%, 65%);
   --dark-green: hsl(203, 33%, 22%);
@@ -34,6 +33,15 @@
 
   /* font family  */
   --sans-serif: 'Quicksand', sans-serif;
+
+  --spacing-1: 5px;
+  --spacing-2: 10px;
+  --spacing-3: 15px;
+  --spacing-4: 20px;
+  --spacing-5: 25px;
+  --spacing-6: 30px;
+
+  --page-spacing: var(--spacing-4);
 }
 html,
 body {
@@ -43,6 +51,7 @@ body {
   font-weight: 400;
   line-height: 1.75;
   color: var(--text-color);
+  background-color: var(--bg);
 }
 
 h1,
@@ -62,7 +71,10 @@ li {
   list-style: none;
 }
 
-p {
+p,
+a {
+  word-break: break-all;
+  word-wrap: break-word;
 }
 
 h1 {
