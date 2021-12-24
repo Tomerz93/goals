@@ -1,0 +1,9 @@
+.mainWrapper {
+  display: grid;
+  grid-template-columns: minmax(auto, 25px) repeat(10, 1fr) minmax(auto, 25px);
+  max-width: var(--screen-xl);
+  margin-inline: auto;
+  > * {
+    grid-column: 2 / span 10;
+  }
+}

@@ -30,6 +30,7 @@
   --fs-400: 1.125rem;
   --fs-300: 1rem;
   --fs-200: 0.875rem;
+  --fs-100: 0.75rem;
 
   /* font family  */
   --sans-serif: 'Quicksand', sans-serif;
@@ -40,8 +41,15 @@
   --spacing-4: 20px;
   --spacing-5: 25px;
   --spacing-6: 30px;
+  --spacing-6: 35px;
 
-  --page-spacing: var(--spacing-4);
+  --page-spacing: var(--spacing-5);
+
+  --screen-xs: 375px;
+  --screen-sm: 768px;
+  --screen-md: 980px;
+  --screen-lg: 1200px;
+  --screen-xl: 1600px;
 }
 html,
 body {
@@ -52,6 +60,7 @@ body {
   line-height: 1.75;
   color: var(--text-color);
   background-color: var(--bg);
+  font-size: clamp(1rem, calc(var(--fs-100) + 1vw), 1.2rem);
 }
 
 h1,
