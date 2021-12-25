@@ -1,9 +1,16 @@
 .mainWrapper {
+  background-image: url('../../../../public/images/svg/pattern-black.svg');
+  height: calc(100vh - var(--header-height));
   display: grid;
-  grid-template-columns: minmax(auto, 25px) repeat(10, 1fr) minmax(auto, 25px);
+  margin-block-start: var(--header-height);
+  grid-template-columns: minmax(auto, var(--page-spacing)) repeat(10, 1fr) minmax(
+      auto,
+      var(--page-spacing)
+    );
   max-width: var(--screen-xl);
   margin-inline: auto;
   > * {
+    height: 100%;
     grid-column: 2 / span 10;
   }
 }

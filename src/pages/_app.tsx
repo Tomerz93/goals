@@ -1,4 +1,4 @@
-import '../styles/globals.css'
+import '../styles/globals.scss'
 import '../styles/index.scss'
 import type { AppProps } from 'next/app'
 import { AuthProvider } from '@lib/context'
