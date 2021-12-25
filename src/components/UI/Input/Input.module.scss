@@ -1,0 +1,17 @@
+.Input {
+  border: none;
+  border-bottom: 2px solid #fff;
+  background-color: transparent;
+  color: #fff;
+  &:focus-visible {
+    outline: 0;
+  }
+  // padding-inline: var(--spacing-3);
+  padding-block: var(--spacing-2);
+  &.Error {
+    border-bottom: 2px solid var(--danger);
+  }
+}
+.Label {
+  display: block;
+}

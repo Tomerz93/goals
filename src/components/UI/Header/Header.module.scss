@@ -1,3 +1,9 @@
 .Header {
-  // write some code
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: var(--header-height);
+  padding: var(--page-spacing);
+  display: flex;
+  justify-content: space-between;
 }
