@@ -1,12 +1,13 @@
 .Input {
   border: none;
+  width: 100%;
   border-bottom: 2px solid #fff;
   background-color: transparent;
   color: #fff;
+  transition: border 0.2s ease-in-out;
   &:focus-visible {
     outline: 0;
   }
-  // padding-inline: var(--spacing-3);
   padding-block: var(--spacing-2);
   &.Error {
     border-bottom: 2px solid var(--danger);
