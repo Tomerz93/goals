@@ -1,20 +1,42 @@
-import { FC, createContext, useContext } from 'react'
-import { auth } from '@lib/firebase'
-import { useAuthState } from 'react-firebase-hooks/auth'
+import { FC, createContext, useContext, useEffect, useState } from 'react';
+import { auth, getDocById } from '@lib/firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
-const AuthContext = createContext({ user: null, username: '' })
+const AuthContext = createContext({
+  user: null,
+  username: '',
+  loading: false,
+  isFetching: true,
+});
 
 const useWithAuthContext = () => {
-    const { user, username } = useContext(AuthContext)
-    return { user, username }
-}
+  const { user, username, loading, isFetching } = useContext(AuthContext);
+  return { user, username, loading, isFetching };
+};
 const AuthProvider: FC = ({ children }) => {
-    const [user] = useAuthState(auth);
-    return (
-        <AuthContext.Provider value={{ user: user, username: '' }}>
-            {children}
-        </AuthContext.Provider>
-    )
+  const [authUser, isFetching] = useAuthState(auth);
+  const [username, setUsername] = useState('');
+  const [loading, setLoading] = useState(false);
 
-}
-export { AuthProvider, useWithAuthContext }
+  useEffect(() => {
+    (async () => {
+      if (authUser) {
+        setLoading(true);
+        const firebaseUser = await getDocById('users', authUser.uid);
+        if (firebaseUser) {
+          setUsername(firebaseUser.username);
+          setLoading(false);
+        }
+      }
+    })();
+  }, [authUser]);
+
+  return (
+    <AuthContext.Provider
+      value={{ user: authUser, username, loading, isFetching }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+export { AuthProvider, useWithAuthContext };

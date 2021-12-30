@@ -1,11 +1,10 @@
 .mainWrapper {
-  background-image: url('../../../../public/images/svg/pattern-black.svg');
   height: calc(100vh - var(--header-height));
   display: grid;
   margin-block-start: var(--header-height);
-  grid-template-columns: minmax(auto, var(--page-spacing)) repeat(10, 1fr) minmax(
+  grid-template-columns: minmax(auto, calc(var(--page-spacing))) repeat(10, 1fr) minmax(
       auto,
-      var(--page-spacing)
+      calc(var(--page-spacing))
     );
   max-width: var(--screen-xl);
   margin-inline: auto;

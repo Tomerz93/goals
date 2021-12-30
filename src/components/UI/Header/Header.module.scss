@@ -6,4 +6,8 @@
   padding: var(--page-spacing);
   display: flex;
   justify-content: space-between;
+  svg {
+    width: 24px;
+    height: 24px;
+  }
 }

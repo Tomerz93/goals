@@ -19,3 +19,13 @@
     //   background-color: darken(var(--primary), 5%);
   }
 }
+.btnGradient {
+  background-image: linear-gradient(to right, var(--primary), var(--secondary));
+  color: #fff;
+  &:hover {
+    //   background-color: darken(var(--primary), 5%);
+  }
+}
+.btnSelected {
+  border: 1px solid #fff;
+}

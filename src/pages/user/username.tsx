@@ -1,4 +1,4 @@
-import type { NextPage } from "next";
+import type { NextPage } from 'next';
 
 const Username: NextPage = () => {
   return <div>Set username screen</div>;
