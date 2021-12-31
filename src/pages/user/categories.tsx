@@ -1,8 +1,17 @@
 import React from 'react';
 import type { NextPage } from 'next';
-import { useArray } from '@lib/hooks';
+import { useRouter } from 'next/router';
 import type { CategoryItem } from '@lib/modals';
-import { Button, CategoryGrid, LayoutWithoutHeader } from '@components/UI';
+import { useArray } from '@lib/hooks';
+import {
+  Button,
+  CategoryGrid,
+  LayoutWithoutHeader,
+  FlexContainer,
+} from '@components/UI';
+import { addTag } from '@lib/firebase';
+import { useWithAuthContext } from '@lib/context';
+import { GOALS_ROUTES } from '@lib/routes';
 
 const LIFE_STYLE_ITEMS = [
   {
@@ -72,19 +81,34 @@ interface CategoryMap {
   [key: string]: boolean;
 }
 
-type SelectedCategories = CategoryMap | {};
+type SelectedCategories = CategoryMap;
 
-const SelectCategories: NextPage = () => {
+type Layout = {
+  Layout: React.ReactNode;
+};
+
+type NextPageWithLayout = NextPage & Layout;
+
+const SelectCategories: NextPageWithLayout = () => {
   const { data, push, remove, exists } = useArray<CategoryItem>([]);
+  const { user } = useWithAuthContext();
+  const router = useRouter();
   const handleOnClick = (category: CategoryItem) => {
     if (exists(category.id)) remove(category.id);
     else push(category);
   };
-
-  const selectedCategories = data.reduce<SelectedCategories>((acc, item) => {
-    acc[item.id] = true;
+  const navigateToFeed = () => router.push(GOALS_ROUTES.GOAL_FEED);
+  const handleOnSubmit = async () => {
+    if (data.length > 0) {
+      await addTag(user?.uid, data);
+      navigateToFeed();
+    }
+  };
+  const selectedCategories = data.reduce<SelectedCategories>((acc, { id }) => {
+    acc[id] = true;
     return acc;
   }, {});
+
   return (
     <div>
       <h4>What goals would you like to support and see on your main feed?</h4>
@@ -97,7 +121,17 @@ const SelectCategories: NextPage = () => {
         onClick={handleOnClick}
         categories={CATEGORY_MAP}
       />
-      <Button>Submit</Button>
+      <div style={{ marginTop: '5rem' }} />
+      <FlexContainer justifyContent="start">
+        <Button
+          style={{ marginInlineEnd: 'var(--spacing-4)' }}
+          disabled={!data.length}
+          handleOnClick={handleOnSubmit}
+        >
+          Submit
+        </Button>
+        <Button handleOnClick={navigateToFeed}>Set Categories Later</Button>
+      </FlexContainer>
     </div>
   );
 };

@@ -69,7 +69,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({
   <>
     {Object.entries(categories).map(([key, items]) => (
       <Fragment key={key}>
-        <h6>{capitalize(key)}</h6>
+        <h5>{capitalize(key)}</h5>
         <CategoryList
           selectedCategories={selectedCategories}
           onClick={onClick}

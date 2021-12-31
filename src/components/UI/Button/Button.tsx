@@ -13,6 +13,7 @@ interface ButtonProps {
   isSelected?: boolean;
   handleOnClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   type?: 'button' | 'submit' | 'link';
+  style?: React.CSSProperties;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -20,6 +21,7 @@ const Button: React.FC<ButtonProps> = ({
   className,
   disabled,
   handleOnClick,
+  style = {},
   isSelected,
   variant = 'primary',
 }) => {
@@ -31,7 +33,12 @@ const Button: React.FC<ButtonProps> = ({
     [`${className}`]: className,
   });
   return (
-    <button className={classes} disabled={disabled} onClick={handleOnClick}>
+    <button
+      style={style}
+      className={classes}
+      disabled={disabled}
+      onClick={handleOnClick}
+    >
       {children}
     </button>
   );
