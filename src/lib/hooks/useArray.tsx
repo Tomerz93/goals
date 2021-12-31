@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+interface ObjectWithId {
+  id: string;
+}
+
 export function useArray<T>(initialValue: T[]) {
   const [data, setData] = useState(initialValue);
   const push = (item: T) => setData([...data, item]);

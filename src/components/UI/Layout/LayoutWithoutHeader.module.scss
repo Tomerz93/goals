@@ -2,15 +2,18 @@
   background-image: url('../../../../public/images/svg/pattern-black.svg');
   height: 100vh;
   padding-top: 3rem;
-  display: grid;
-  grid-template-columns: minmax(auto, var(--page-spacing)) repeat(10, 1fr) minmax(
-      auto,
-      var(--page-spacing)
-    );
-  max-width: var(--screen-xl);
-  margin-inline: auto;
+  // display: grid;
+  // grid-template-columns: minmax(auto, var(--page-spacing)) repeat(10, 1fr) minmax(
+  //     auto,
+  //     var(--page-spacing)
+  //   );
   > * {
+    margin-inline: auto;
+    max-width: min(
+      calc(100% - calc(var(--page-spacing) * 2)),
+      var(--screen-lg)
+    );
     height: 100%;
-    grid-column: 2 / span 10;
+    // grid-column: 2 / span 10;
   }
 }

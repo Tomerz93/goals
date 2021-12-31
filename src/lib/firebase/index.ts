@@ -1,8 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDoc, collection, doc, setDoc, writeBatch } from 'firebase/firestore';
+import { getFirestore, getDoc, collection, doc, setDoc, writeBatch, addDoc, updateDoc } from 'firebase/firestore';
 import { getAuth, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { COLLECTION_NAMES } from './constants';
+import { CategoryItem } from '@lib/modals';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_APP_KEY,
@@ -31,8 +32,10 @@ const logInWithProvider = async (provider = googleAuthProvider): Promise<void> =
 }
 
 const userCollection = collection(db, COLLECTION_NAMES.USERS);
-
+const getUserRef = (uid: string) => doc(userCollection, uid)
 const userNameCollections = collection(db, COLLECTION_NAMES.USERNAMES);
+
+const tagsCollection = collection(db, COLLECTION_NAMES.TAGS);
 
 const getRefIfExists = async (collectionName: string, ref: string) => {
   try {
@@ -56,6 +59,15 @@ const getDocById = async (collectionName: string = 'users', userId: string) => {
   }
 }
 
+const addTag = async (userId: string, categories: Array<CategoryItem> | CategoryItem) => {
+  const userRef = getUserRef(userId)
+  try {
+    await updateDoc(userRef, { categories })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 type userData = {
   email: string
   uid: string
@@ -74,4 +86,4 @@ const createUser = async (userData: userData, username: string) => {
 
 
 
-export { db, auth, logInWithProvider, createUser, getDocById, getRefIfExists };
+export { db, auth, logInWithProvider, createUser, getDocById, addTag, getRefIfExists };
