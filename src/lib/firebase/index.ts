@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDoc, collection, doc, setDoc, writeBatch, addDoc, updateDoc } from 'firebase/firestore';
+import { getFirestore, getDoc, collection, doc, writeBatch, setDoc, getDocs, query, where, limit } from 'firebase/firestore';
 import { getAuth, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { COLLECTION_NAMES } from './constants';
 import { CategoryItem } from '@lib/modals';
@@ -18,12 +18,15 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-
 const db = getFirestore();
 
 const auth = getAuth(app);
 
 const googleAuthProvider = new GoogleAuthProvider()
+
+const userCollection = collection(db, COLLECTION_NAMES.USERS);
+
+const userNameCollections = collection(db, COLLECTION_NAMES.USERNAMES);
 
 export const logout = (): Promise<void> => signOut(auth);
 
@@ -31,11 +34,17 @@ const logInWithProvider = async (provider = googleAuthProvider): Promise<void> =
   await signInWithPopup(auth, provider);
 }
 
-const userCollection = collection(db, COLLECTION_NAMES.USERS);
 const getUserRef = (uid: string) => doc(userCollection, uid)
-const userNameCollections = collection(db, COLLECTION_NAMES.USERNAMES);
 
-const tagsCollection = collection(db, COLLECTION_NAMES.TAGS);
+const getUserByUsername = async (username: string) => {
+
+  const userResult = query(userCollection, where('username', '==', username), limit(1))
+  const userDoc = await getDocs(userResult)
+  if (!userDoc.empty) {
+    return userDoc.docs[0].data()
+  }
+  return null
+}
 
 const getRefIfExists = async (collectionName: string, ref: string) => {
   try {
@@ -44,11 +53,14 @@ const getRefIfExists = async (collectionName: string, ref: string) => {
     if (docSnap.exists()) {
       const document = await getDoc(documentRef)
       return document?.data()
+    } else {
+      return null
     }
   } catch (error) {
     throw error
   }
 }
+const getRef = (collectionName: string, ref: string) => doc(db, collectionName, ref)
 
 const getDocById = async (collectionName: string = 'users', userId: string) => {
   try {
@@ -60,11 +72,18 @@ const getDocById = async (collectionName: string = 'users', userId: string) => {
 }
 
 const addTag = async (userId: string, categories: Array<CategoryItem> | CategoryItem) => {
-  const userRef = getUserRef(userId)
+  const categoriesRef = doc(db, COLLECTION_NAMES.USERS, userId);
   try {
-    await updateDoc(userRef, { categories })
+    await setDoc(categoriesRef, { categories }, { merge: true })
   } catch (error) {
-    console.log(error)
+    return error
+  }
+}
+const getSubCollectionByUser = async (userId: string) => {
+  const categoriesRef = doc(db, COLLECTION_NAMES.USERS, userId, COLLECTION_NAMES.CATEGORIES);
+  const categoriesDoc = await getDoc(categoriesRef)
+  if (categoriesDoc.exists()) {
+    return categoriesDoc.data()
   }
 }
 
@@ -75,8 +94,8 @@ type userData = {
 
 const createUser = async (userData: userData, username: string) => {
   const batch = writeBatch(db);
-  batch.set(doc(userCollection, userData.uid), { email: userData.email, id: userData.uid, username })
-  batch.set(doc(userNameCollections, username), { userId: userData.uid, username })
+  batch.set(doc(userCollection, userData.uid), { email: userData.email, id: userData.uid, username }, { merge: true })
+  batch.set(doc(userNameCollections, username), { userId: userData.uid, username }, { merge: true })
   try {
     await batch.commit()
   } catch (error) {
@@ -84,6 +103,4 @@ const createUser = async (userData: userData, username: string) => {
   }
 }
 
-
-
-export { db, auth, logInWithProvider, createUser, getDocById, addTag, getRefIfExists };
+export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, getSubCollectionByUser, getRef };

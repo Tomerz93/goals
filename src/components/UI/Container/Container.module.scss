@@ -1,0 +1,11 @@
+.container {
+  height: 100vh;
+  > * {
+    margin-inline: auto;
+    max-width: min(
+      calc(100% - calc(var(--page-spacing) * 2)),
+      var(--screen-lg)
+    );
+    height: 100%;
+  }
+}

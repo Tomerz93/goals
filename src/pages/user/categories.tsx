@@ -1,5 +1,4 @@
-import React from 'react';
-import type { NextPage } from 'next';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import type { CategoryItem } from '@lib/modals';
 import { useArray } from '@lib/hooks';
@@ -10,8 +9,10 @@ import {
   FlexContainer,
 } from '@components/UI';
 import { addTag } from '@lib/firebase';
-import { useWithAuthContext } from '@lib/context';
+import { useUserContext } from '@lib/context/user';
 import { GOALS_ROUTES } from '@lib/routes';
+import { useAsyncCall } from '@lib/hooks/useAsyncCall';
+import { NextPageWithLayout } from '@lib/modals/generic';
 
 const LIFE_STYLE_ITEMS = [
   {
@@ -83,32 +84,35 @@ interface CategoryMap {
 
 type SelectedCategories = CategoryMap;
 
-type Layout = {
-  Layout: React.ReactNode;
-};
-
-type NextPageWithLayout = NextPage & Layout;
-
 const SelectCategories: NextPageWithLayout = () => {
-  const { data, push, remove, exists } = useArray<CategoryItem>([]);
-  const { user } = useWithAuthContext();
+  const { data, set, push, remove, exists } = useArray<CategoryItem>([]);
+  const { user, isLoading } = useUserContext();
+  const { call, isSuccess } = useAsyncCall(addTag);
   const router = useRouter();
+  const navigateToFeed = () => router.push(GOALS_ROUTES.GOAL_FEED);
+
+  useEffect(() => {
+    if (isSuccess) navigateToFeed();
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (user?.categories?.length > 0) set(user?.categories);
+  }, [user]);
+
   const handleOnClick = (category: CategoryItem) => {
     if (exists(category.id)) remove(category.id);
     else push(category);
   };
-  const navigateToFeed = () => router.push(GOALS_ROUTES.GOAL_FEED);
   const handleOnSubmit = async () => {
-    if (data.length > 0) {
-      await addTag(user?.uid, data);
-      navigateToFeed();
-    }
+    if (data.length > 0) await call(user?.id, data);
   };
+
   const selectedCategories = data.reduce<SelectedCategories>((acc, { id }) => {
     acc[id] = true;
     return acc;
   }, {});
 
+  if (!user) return <div>Loading...</div>;
   return (
     <div>
       <h4>What goals would you like to support and see on your main feed?</h4>
@@ -128,7 +132,7 @@ const SelectCategories: NextPageWithLayout = () => {
           disabled={!data.length}
           handleOnClick={handleOnSubmit}
         >
-          Submit
+          {isLoading ? 'Loading...' : 'Submit'}
         </Button>
         <Button handleOnClick={navigateToFeed}>Set Categories Later</Button>
       </FlexContainer>

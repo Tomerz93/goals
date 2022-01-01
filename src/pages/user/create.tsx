@@ -2,9 +2,10 @@ import React, { useState, useEffect, SyntheticEvent } from 'react';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { createUser, getDocById } from '@lib/firebase';
-import { useWithAuthContext } from '@lib/context';
-import { GOALS_ROUTES } from '@lib/routes';
+import { useWithAuthContext } from '@lib/context/auth';
+import { GOALS_ROUTES, USER_ROUTES } from '@lib/routes';
 import { Input, Button, LayoutWithoutHeader } from '@components/UI';
+import { useUserContext } from '@lib/context/user';
 
 const Spacer: React.FC = () => <div style={{ marginTop: '3rem' }}></div>;
 
@@ -32,7 +33,7 @@ const UserNameForm: React.FC = () => {
     const exitingUsername = await getDocById('usernames', username);
 
     if (!exitingUsername) {
-      const { email = '', uid = '' } = user ?? ({} as any);
+      const { email = '', uid = '' } = user ?? { email: '', uid: '' };
       await createUser({ email, uid }, username);
       router.push(GOALS_ROUTES.GOAL_FEED);
       setLoading(false);
@@ -77,16 +78,20 @@ const isValidUsername = (username: string) => {
 };
 
 const CreateUsername: NextPage = () => {
-  const { user, username, loading } = useWithAuthContext();
+  const { user: authUser } = useWithAuthContext();
+  const { user } = useUserContext();
+  const { username = '' } = user ?? { username: '' };
   const router = useRouter();
 
   useEffect(() => {
-    if (user && username) {
+    if (user && user?.categories?.length > 0)
       router.push(GOALS_ROUTES.GOAL_FEED);
-    }
-  }, [username, user]);
-  return user && !username && !loading ? <UserNameForm /> : <Spinner />;
+    if (user && !user?.categories?.length)
+      router.push(USER_ROUTES.USER_CATEGORIES);
+  }, [username, authUser]);
+  return authUser && !username ? <UserNameForm /> : <Spinner />;
 };
+
 CreateUsername.Layout = LayoutWithoutHeader;
 
 export default CreateUsername;
