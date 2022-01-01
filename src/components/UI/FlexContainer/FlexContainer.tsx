@@ -6,22 +6,29 @@ interface HeadingProps {
   justifyContent?: 'start' | 'center' | 'end' | 'between';
   alignItems?: 'start' | 'center' | 'end' | 'baseline' | 'stretch';
   direction?: 'row' | 'column';
+  gap?: string;
 }
 
 const FlexContainer: React.FC<HeadingProps> = ({
   children,
-  justifyContent = 'center',
-  alignItems = 'center',
+  justifyContent,
+  alignItems,
   direction = 'row',
+  gap = '1',
 }) => {
   const containerStyles = cx({
     flex: true,
     'justify-center': justifyContent === 'center',
+    'justify-end': justifyContent === 'end',
     'space-between': justifyContent === 'between',
     'align-center': alignItems === 'center',
-    colum: direction === 'column',
+    column: direction === 'column',
   });
-  return <div className={containerStyles}>{children}</div>;
+  return (
+    <div style={{ gap: `var(--spacing-${gap})` }} className={containerStyles}>
+      {children}
+    </div>
+  );
 };
 
 export default FlexContainer;

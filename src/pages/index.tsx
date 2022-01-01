@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useWithAuthContext } from 'lib/context';
+import { useWithAuthContext } from '@lib/context/auth';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';

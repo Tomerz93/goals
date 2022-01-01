@@ -5,3 +5,4 @@ export { default as LayoutWithoutHeader } from "./Layout/LayoutWithoutHeader"
 export { default as Input } from "./Input/Input"
 export { default as CategoryGrid } from './Category/Category'
 export { default as FlexContainer } from './FlexContainer/FlexContainer'
+export { default as Avatar } from './Avatar/Avatar'

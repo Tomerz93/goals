@@ -1,0 +1,14 @@
+.GoalCardContainer {
+  border-radius: 5px;
+  padding: var(--spacing-2) var(--spacing-3);
+  background: hsl(203 76% 20% / 80%);
+  h3 {
+    font-size: var(--fs-400);
+  }
+  p {
+    margin-top: var(--spacing-1);
+  }
+  svg {
+    margin-inline-start: var(--spacing-1);
+  }
+}

@@ -4,6 +4,7 @@ const AUTH_ROUTES = {
 
 const USER_ROUTES = {
     USER_CREATE: '/user/create',
+    USER_CATEGORIES: '/user/categories',
 }
 const GOALS_ROUTES = {
     GOAL_CREATE: '/goals/create',
