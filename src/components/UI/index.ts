@@ -6,3 +6,4 @@ export { default as Input } from "./Input/Input"
 export { default as CategoryGrid } from './Category/Category'
 export { default as FlexContainer } from './FlexContainer/FlexContainer'
 export { default as Avatar } from './Avatar/Avatar'
+export { Tabs, TabButton, TabList, TabPanel, TabsPanelList } from './Tabs/Tabs'

@@ -5,7 +5,21 @@ interface GenericListProps {
   component: any;
   resourceName: string;
   el?: 'ul' | 'div';
-  type: 'grid' | 'list';
+  type?: 'grid' | 'list';
+  gap: number;
+}
+interface gapDefinition {
+  vertical: { x: number } & { y: number };
+  horizontal: { x: number } & { y: number };
+  symmetric: number;
+  all: { bottom: number } & { right: number } & { top: number } & {
+    left: number;
+  };
+  only:
+    | { bottom: number }
+    | { right: number }
+    | { top: number }
+    | { left: number };
 }
 
 const GenericList: React.FC<GenericListProps> = ({
@@ -14,18 +28,16 @@ const GenericList: React.FC<GenericListProps> = ({
   resourceName,
   el: Element = 'div',
   type = 'grid',
+  gap,
 }) => {
   return (
-    <Element
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(0, 1fr))',
-      }}
-    >
-      {items.map((item) => (
-        <Component key={getUniqueId()} {...{ [resourceName]: item }} />
+    <>
+      {items.map((item, index) => (
+        <div style={{ marginBottom: `var(--spacing-${gap})` }}>
+          <Component key={getUniqueId()} {...{ [resourceName]: item }} />
+        </div>
       ))}
-    </Element>
+    </>
   );
 };
 
