@@ -13,6 +13,7 @@
   --green: hsl(130, 61%, 65%);
   --dark-green: hsl(203, 33%, 22%);
   --faded-gray: hsl(209, 20%, 33%);
+  --lightest-gray: hsl(0, 0%, 93%);
   --lightest-blue: hsl(205, 93%, 84%);
   --light-blue: hsl(216, 78%, 47%);
   --dark-blue: hsl(203, 36%, 13%);
@@ -81,6 +82,8 @@ h3,
 h4,
 h5,
 h6,
+dl,
+dt,
 p {
   margin: 0;
   font-weight: 400;

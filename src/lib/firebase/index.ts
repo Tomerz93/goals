@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDoc, collection, doc, writeBatch, setDoc, getDocs, query, where, limit } from 'firebase/firestore';
+import { getFirestore, getDoc, collection, doc, writeBatch, setDoc, getDocs, query, where, limit, CollectionReference } from 'firebase/firestore';
 import { getAuth, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { COLLECTION_NAMES } from './constants';
 import { CategoryItem } from '@lib/modals';
@@ -15,6 +15,12 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID,
 };
 
+interface Goal {
+  userId: string;
+  title: string;
+  completed: boolean
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
@@ -25,6 +31,8 @@ const auth = getAuth(app);
 const googleAuthProvider = new GoogleAuthProvider()
 
 const userCollection = collection(db, COLLECTION_NAMES.USERS);
+
+const goalsCollection = collection(db, COLLECTION_NAMES.GOALS) as CollectionReference<Goal>;
 
 const userNameCollections = collection(db, COLLECTION_NAMES.USERNAMES);
 
@@ -37,12 +45,26 @@ const logInWithProvider = async (provider = googleAuthProvider): Promise<void> =
 const getUserRef = (uid: string) => doc(userCollection, uid)
 
 const getUserByUsername = async (username: string) => {
-
   const userResult = query(userCollection, where('username', '==', username), limit(1))
   const userDoc = await getDocs(userResult)
   if (!userDoc.empty) {
     return userDoc.docs[0].data()
   }
+  return null
+}
+
+interface CollectionKeys {
+  [key: string]: string
+}
+
+const COLLECTIONS = {
+  [COLLECTION_NAMES.GOALS]: goalsCollection
+}
+
+const getGoalsByUser = async (userId: string) => {
+  const queryResult = query(goalsCollection, where('userId', '==', userId))
+  const goalsDoc = await getDocs(queryResult)
+  if (!goalsDoc.empty) return goalsDoc.docs.map(doc => ({ ...doc.data(), id: doc.id }))
   return null
 }
 
@@ -60,6 +82,9 @@ const getRefIfExists = async (collectionName: string, ref: string) => {
     throw error
   }
 }
+
+const getGoalById = (id: string) => getRefIfExists(COLLECTION_NAMES.GOALS, id)
+
 const getRef = (collectionName: string, ref: string) => doc(db, collectionName, ref)
 
 const getDocById = async (collectionName: string = 'users', userId: string) => {
@@ -103,4 +128,4 @@ const createUser = async (userData: userData, username: string) => {
   }
 }
 
-export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, getSubCollectionByUser, getRef };
+export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, getSubCollectionByUser, getRef, getGoalsByUser, getGoalById };

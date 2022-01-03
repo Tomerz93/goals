@@ -1,0 +1,43 @@
+.step {
+  padding-left: var(--spacing-4);
+  margin-bottom: var(--spacing-3);
+  position: relative;
+  &::before {
+    content: '';
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #fff;
+    z-index: 1;
+  }
+  &.completed {
+    &::before {
+      background-color: var(--success);
+    }
+  }
+  &::after {
+    content: '';
+    width: 3px;
+    height: 100%;
+    position: absolute;
+    left: 6px;
+    top: 50%;
+    transform: translateY(25%);
+    background-color: white;
+    z-index: 0;
+  }
+  &.completed {
+    &::after {
+      background-color: var(--success);
+    }
+  }
+  &:last-child {
+    &::after {
+      display: none;
+    }
+  }
+}

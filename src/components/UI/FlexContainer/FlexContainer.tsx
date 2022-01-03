@@ -13,11 +13,13 @@ const FlexContainer: React.FC<HeadingProps> = ({
   children,
   justifyContent,
   alignItems,
+  className,
   direction = 'row',
   gap = '1',
 }) => {
   const containerStyles = cx({
     flex: true,
+    [`${className}`]: true,
     'justify-center': justifyContent === 'center',
     'justify-end': justifyContent === 'end',
     'space-between': justifyContent === 'between',

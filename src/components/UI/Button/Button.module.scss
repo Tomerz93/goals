@@ -28,3 +28,14 @@
 .btnSelected {
   border: 1px solid #fff;
 }
+.btnTab {
+  background: transparent;
+  color: var(--lightest-gray);
+  border: 0;
+  padding-block-end: var(--spacing-2);
+  &.btnSelected {
+    font-weight: bold;
+    border-bottom: 1px solid var(--lightest-blue);
+    color: var(--lightest-blue);
+  }
+}

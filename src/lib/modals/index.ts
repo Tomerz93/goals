@@ -1,2 +1,3 @@
 import type { CategoryItem } from './category'
-export type { CategoryItem }
+import type { Goal, Step } from './goal'
+export type { CategoryItem, Goal, Step }
