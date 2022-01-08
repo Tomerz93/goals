@@ -11,6 +11,7 @@ export function useLoadFIreBaseDocument<T>(
   const [isLoading, setLisLoading] = useState(true);
   const [error, setError] = useState(null);
   useEffect(() => {
+    if (!documentId) return;
     const ref = getRef(collection, documentId);
     const unsubscribe = onSnapshot(ref, (snapshot) => {
       snapshot.exists() ? setDocument(snapshot.data() as T) : setDocument(null);

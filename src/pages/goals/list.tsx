@@ -1,7 +1,7 @@
 import { useUserContext } from '@lib/context/user';
 import type { NextPage } from 'next';
 import styles from './index.module.scss';
-import React, { ReactElement, useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getGoalsByUser } from '@lib/firebase';
 import {
   Tabs,
@@ -12,6 +12,7 @@ import {
 } from '@components/UI';
 import GenericList from '@components/UI/GenericList/GenericList';
 import GoalListCard from '@components/Goals/GoalListCard/GoalListCard';
+import { useQuery } from '@lib/hooks/useQuery';
 
 interface Goal {
   completed: boolean;
@@ -36,7 +37,7 @@ const sortGoals = (goals: Goal[]) =>
       )
     : { inProgress: [], completed: [] };
 
-const GoalList = ({ goals }) => (
+const GoalList: React.FC<{ goals: Goal[] }> = ({ goals }) => (
   <GenericList
     items={goals}
     gap={4}
@@ -54,15 +55,13 @@ const Feed: NextPage = () => {
     completed: [],
   });
   const { inProgress, completed } = goals;
+  const id = user?.id ?? '';
+  const { isLoading, document } = useQuery<Goal>('goals', id);
+
   useEffect(() => {
-    const fetch = async () => {
-      if (user?.id) {
-        const data = await getGoalsByUser(user.id);
-        if (data && data?.length > 0) setGoals(sortGoals(data));
-      }
-    };
-    fetch();
-  }, [user]);
+    if (document) setGoals(sortGoals(document));
+  }, [document]);
+
   return (
     <div className={styles.feedContainer}>
       <Tabs activeTabIndex={activeTabIndex} handleOnClick={setActiveTabIndex}>

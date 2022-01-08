@@ -32,9 +32,12 @@ const GenericList: React.FC<GenericListProps> = ({
 }) => {
   return (
     <>
-      {items.map((item, index) => (
-        <div style={{ marginBottom: `var(--spacing-${gap})` }}>
-          <Component key={getUniqueId()} {...{ [resourceName]: item }} />
+      {items.map((item) => (
+        <div
+          key={getUniqueId()}
+          style={{ marginBottom: `var(--spacing-${gap})` }}
+        >
+          <Component {...{ [resourceName]: item }} />
         </div>
       ))}
     </>

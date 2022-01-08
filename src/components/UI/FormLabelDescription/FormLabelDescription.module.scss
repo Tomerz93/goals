@@ -1,0 +1,12 @@
+.formLabelDescription {
+  h6 {
+    font-size: var(--fs-300);
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+  p {
+    font-size: var(--fs-200);
+    color: var(--lightest-gray);
+  }
+  margin-bottom: var(--spacing-2);
+}

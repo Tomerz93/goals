@@ -58,8 +58,10 @@ interface CollectionKeys {
 }
 
 const COLLECTIONS = {
-  [COLLECTION_NAMES.GOALS]: goalsCollection
+  [COLLECTION_NAMES.GOALS]: goalsCollection,
+  [COLLECTION_NAMES.USERS]: userCollection
 }
+const getCollection = (key: string) => COLLECTIONS[key]
 
 const getGoalsByUser = async (userId: string) => {
   const queryResult = query(goalsCollection, where('userId', '==', userId))
@@ -117,6 +119,13 @@ type userData = {
   uid: string
 }
 
+const addGoal = (userId: string, goal: Goal) => {
+  const batch = writeBatch(db);
+  // batch.set(doc(userCollection, userId), { email: userData.email, id: userData.uid, username }, { merge: true })
+  batch.set(doc(goalsCollection), goal, { merge: true })
+  batch.commit()
+}
+
 const createUser = async (userData: userData, username: string) => {
   const batch = writeBatch(db);
   batch.set(doc(userCollection, userData.uid), { email: userData.email, id: userData.uid, username }, { merge: true })
@@ -128,4 +137,4 @@ const createUser = async (userData: userData, username: string) => {
   }
 }
 
-export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, getSubCollectionByUser, getRef, getGoalsByUser, getGoalById };
+export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, getSubCollectionByUser, getRef, getGoalsByUser, getGoalById, getCollection, userCollection };
