@@ -2,7 +2,9 @@
   border: none;
   width: 100%;
   border-bottom: 2px solid #fff;
-  background-color: transparent;
+  margin-block-start: var(--spacing-2);
+  background-color: #445565;
+
   color: #fff;
   transition: border 0.2s ease-in-out;
   &:focus-visible {
@@ -13,7 +15,16 @@
     border-bottom: 2px solid var(--danger);
   }
 }
+.textArea {
+  margin-block-start: var(--spacing-2);
+  background-color: #445565;
+  resize: none;
+}
 .Label {
   display: block;
   text-transform: capitalize;
+}
+.explanation {
+  font-size: var(--fs-200);
+  color: var(--lightest-gray);
 }
