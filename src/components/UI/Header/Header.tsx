@@ -2,9 +2,13 @@ import styles from './Header.module.scss';
 import { MdOutlineExplore } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 
-const Header = () => (
+interface HeaderProps {
+  openDrawer: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ openDrawer }) => (
   <header className={styles.Header}>
-    <CgProfile />
+    <CgProfile onClick={() => openDrawer()} />
     <MdOutlineExplore />
   </header>
 );

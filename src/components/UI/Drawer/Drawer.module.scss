@@ -1,0 +1,28 @@
+.drawerContainer {
+  display: grid;
+  gap: var(--spacing-2);
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(12, 1fr);
+  position: fixed;
+  background-color: var(--dark-green);
+  height: 100%;
+  min-inline-size: 70%;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  > * {
+    grid-column: 1 / -1;
+    height: min-content;
+  }
+}
+.visible {
+  transform: translateX(0);
+}
+
+@media (min-width: 768px) {
+  .drawerContainer {
+    display: none;
+  }
+}

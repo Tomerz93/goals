@@ -12,6 +12,7 @@ export function useQuery<T>(
         operator: WhereFilterOp
     } = { identifier: 'userId', operator: '==' },
 ) {
+
     const { identifier, operator } = whereConfig
     const [document, setDocument] = useState<null | T>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -23,12 +24,10 @@ export function useQuery<T>(
             const collection = getCollection(collectionName);
             const queryResult = query(collection, where(identifier, operator, documentId))
             const result = await getDocs(queryResult)
-            console.log(result)
             if (result.empty) setDocument(null)
             else {
-                const res = result.docs.map(doc => ({ ...doc.data(), id: doc.id }))
-                console.log('not empty')
-                setDocument(res) as T
+                const res = result.docs.map(doc => ({ ...doc.data(), id: doc.id }) as T)
+                setDocument(res)
             }
         }
         if (documentId) fetchFromDb()

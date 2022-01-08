@@ -7,18 +7,18 @@
 }
 
 :root {
+  --dark-green-clr: 203 33% 22%;
   /* color definitions */
   --red: hsl(0, 61%, 65%);
   --purple: hsl(263, 78%, 47%);
   --green: hsl(130, 61%, 65%);
-  --dark-green: hsl(203, 33%, 22%);
+  --dark-green: hsl(var(--dark-green-clr));
   --faded-gray: hsl(209, 20%, 33%);
   --lightest-gray: hsl(0, 0%, 93%);
   --lightest-blue: hsl(205, 93%, 84%);
   --light-blue: hsl(216, 78%, 47%);
   --dark-blue: hsl(203, 36%, 13%);
   --light-gray: hsl(0, 0%, 96%);
-
   --primary: var(--light-blue);
   --secondary: var(--purple);
   --danger: var(--red);

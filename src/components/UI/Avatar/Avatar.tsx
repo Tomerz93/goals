@@ -9,10 +9,10 @@ interface AvatarProps {
   round?: boolean;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ round }) => (
+const Avatar: React.FC<AvatarProps> = ({ round, src }) => (
   <div className={styles.AvatarContainer} style={{ minWidth: '50px' }}>
     <Image
-      src="/images/avatar.jpeg"
+      src={src ?? '/images/avatar.jpeg'}
       alt="avatar"
       width={50}
       height={50}
