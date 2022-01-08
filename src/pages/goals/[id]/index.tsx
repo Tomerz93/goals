@@ -50,7 +50,7 @@ const ShowGoal: NextPage = () => {
       </Label>
       <Label title="Categories">
         {categories?.length > 0 &&
-          categories.map(({ title }) => <p>{title}</p>)}
+          categories.map(({ title }) => <p key={title}>{title}</p>)}
       </Label>
     </div>
   );
