@@ -1,9 +1,27 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDoc, collection, doc, writeBatch, setDoc, getDocs, query, where, limit, CollectionReference } from 'firebase/firestore';
-import { getAuth, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  getFirestore,
+  getDoc,
+  collection,
+  doc,
+  writeBatch,
+  setDoc,
+  getDocs,
+  query,
+  where,
+  limit,
+  CollectionReference,
+} from 'firebase/firestore';
+import {
+  getAuth,
+  signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth';
 import { COLLECTION_NAMES } from './constants';
 import { CategoryItem } from '@lib/modals';
+import { GoalWIthUser, Goal } from '@lib/modals/goal';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_APP_KEY,
@@ -15,12 +33,6 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_MEASUREMENT_ID,
 };
 
-interface Goal {
-  userId: string;
-  title: string;
-  completed: boolean
-}
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
@@ -28,113 +40,192 @@ const db = getFirestore();
 
 const auth = getAuth(app);
 
-const googleAuthProvider = new GoogleAuthProvider()
+const googleAuthProvider = new GoogleAuthProvider();
 
 const userCollection = collection(db, COLLECTION_NAMES.USERS);
 
-const goalsCollection = collection(db, COLLECTION_NAMES.GOALS) as CollectionReference<Goal>;
+const goalsCollection = collection(
+  db,
+  COLLECTION_NAMES.GOALS
+) as CollectionReference<Goal>;
 
 const userNameCollections = collection(db, COLLECTION_NAMES.USERNAMES);
 
 export const logout = (): Promise<void> => signOut(auth);
 
-const logInWithProvider = async (provider = googleAuthProvider): Promise<void> => {
+const logInWithProvider = async (
+  provider = googleAuthProvider
+): Promise<void> => {
   await signInWithPopup(auth, provider);
-}
+};
 
-const getUserRef = (uid: string) => doc(userCollection, uid)
+const getUserRef = (uid: string) => doc(userCollection, uid);
 
 const getUserByUsername = async (username: string) => {
-  const userResult = query(userCollection, where('username', '==', username), limit(1))
-  const userDoc = await getDocs(userResult)
+  const userResult = query(
+    userCollection,
+    where('username', '==', username),
+    limit(1)
+  );
+  const userDoc = await getDocs(userResult);
   if (!userDoc.empty) {
-    return userDoc.docs[0].data()
+    return userDoc.docs[0].data();
   }
-  return null
-}
+  return null;
+};
+
+const getUserById = async (userId: string) => {
+  const userResult = query(userCollection, where('id', '==', userId), limit(1));
+  const userDoc = await getDocs(userResult);
+  if (!userDoc.empty) {
+    return userDoc.docs[0].data();
+  }
+  return null;
+};
 
 interface CollectionKeys {
-  [key: string]: string
+  [key: string]: string;
 }
 
 const COLLECTIONS = {
   [COLLECTION_NAMES.GOALS]: goalsCollection,
-  [COLLECTION_NAMES.USERS]: userCollection
-}
-const getCollection = (key: string) => COLLECTIONS[key]
+  [COLLECTION_NAMES.USERS]: userCollection,
+};
+const getCollection = (key: string) => COLLECTIONS[key];
 
 const getGoalsByUser = async (userId: string) => {
-  const queryResult = query(goalsCollection, where('userId', '==', userId))
-  const goalsDoc = await getDocs(queryResult)
-  if (!goalsDoc.empty) return goalsDoc.docs.map(doc => ({ ...doc.data(), id: doc.id }))
-  return null
-}
+  const queryResult = query(goalsCollection, where('userId', '==', userId));
+  const goalsDoc = await getDocs(queryResult);
+  if (!goalsDoc.empty)
+    return goalsDoc.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+  return null;
+};
 
 const getRefIfExists = async (collectionName: string, ref: string) => {
   try {
     const documentRef = doc(db, collectionName, ref);
     const docSnap = await getDoc(documentRef);
     if (docSnap.exists()) {
-      const document = await getDoc(documentRef)
-      return document?.data()
+      const document = await getDoc(documentRef);
+      return document?.data();
     } else {
-      return null
+      return null;
     }
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
 
-const getGoalById = (id: string) => getRefIfExists(COLLECTION_NAMES.GOALS, id)
+const getGoalById = (id: string) => getRefIfExists(COLLECTION_NAMES.GOALS, id);
 
-const getRef = (collectionName: string, ref: string) => doc(db, collectionName, ref)
+const getRef = (collectionName: string, ref: string) =>
+  doc(db, collectionName, ref);
 
 const getDocById = async (collectionName: string = 'users', userId: string) => {
   try {
-    const user = await getRefIfExists(collectionName, userId)
-    return user
+    const user = await getRefIfExists(collectionName, userId);
+    return user;
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
 
-const addTag = async (userId: string, categories: Array<CategoryItem> | CategoryItem) => {
+const addTag = async (
+  userId: string,
+  categories: Array<CategoryItem> | CategoryItem
+) => {
   const categoriesRef = doc(db, COLLECTION_NAMES.USERS, userId);
   try {
-    await setDoc(categoriesRef, { categories }, { merge: true })
+    await setDoc(categoriesRef, { categories }, { merge: true });
   } catch (error) {
-    return error
+    return error;
   }
-}
+};
 const getSubCollectionByUser = async (userId: string) => {
-  const categoriesRef = doc(db, COLLECTION_NAMES.USERS, userId, COLLECTION_NAMES.CATEGORIES);
-  const categoriesDoc = await getDoc(categoriesRef)
+  const categoriesRef = doc(
+    db,
+    COLLECTION_NAMES.USERS,
+    userId,
+    COLLECTION_NAMES.CATEGORIES
+  );
+  const categoriesDoc = await getDoc(categoriesRef);
   if (categoriesDoc.exists()) {
-    return categoriesDoc.data()
+    return categoriesDoc.data();
   }
-}
+};
+
+const loadAllGoals = async (): Promise<GoalWIthUser[]> => {
+  const goalsQuery = query(collection(db, COLLECTION_NAMES.GOALS));
+  const goalsDocSnapshot = await getDocs(goalsQuery);
+  const goals: GoalWIthUser[] = [];
+  for await (const doc of goalsDocSnapshot.docs) {
+    const docData = doc.data() as Goal;
+    const { avatarUrl, username } = (await getUserById(docData.userId)) as {
+      avatarUrl: string;
+      username: string;
+    };
+    goals.push({
+      ...docData,
+      avatarUrl,
+      username,
+    });
+  }
+  return goals;
+};
 
 type userData = {
-  email: string
-  uid: string
-}
+  email: string;
+  uid: string;
+  photoURL: string;
+};
 
 const addGoal = (userId: string, goal: Goal) => {
   const batch = writeBatch(db);
   // batch.set(doc(userCollection, userId), { email: userData.email, id: userData.uid, username }, { merge: true })
-  batch.set(doc(goalsCollection), goal, { merge: true })
-  batch.commit()
-}
+  batch.set(doc(goalsCollection), goal, { merge: true });
+  batch.commit();
+};
 
 const createUser = async (userData: userData, username: string) => {
   const batch = writeBatch(db);
-  batch.set(doc(userCollection, userData.uid), { email: userData.email, id: userData.uid, username }, { merge: true })
-  batch.set(doc(userNameCollections, username), { userId: userData.uid, username }, { merge: true })
+  batch.set(
+    doc(userCollection, userData.uid),
+    {
+      email: userData.email,
+      id: userData.uid,
+      username,
+      avatarUrl: userData.photoURL,
+    },
+    { merge: true }
+  );
+  batch.set(
+    doc(userNameCollections, username),
+    { userId: userData.uid, username },
+    { merge: true }
+  );
   try {
-    await batch.commit()
+    await batch.commit();
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
-export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, getSubCollectionByUser, getRef, getGoalsByUser, getGoalById, getCollection, userCollection };
+export {
+  db,
+  auth,
+  getUserByUsername,
+  loadAllGoals,
+  logInWithProvider,
+  createUser,
+  getDocById,
+  addTag,
+  getRefIfExists,
+  doc,
+  app,
+  getSubCollectionByUser,
+  getRef,
+  getGoalsByUser,
+  getGoalById,
+  getCollection,
+  userCollection,
+};

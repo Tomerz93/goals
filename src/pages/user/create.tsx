@@ -33,8 +33,12 @@ const UserNameForm: React.FC = () => {
     const exitingUsername = await getDocById('usernames', username);
 
     if (!exitingUsername) {
-      const { email = '', uid = '' } = user ?? { email: '', uid: '' };
-      await createUser({ email, uid }, username);
+      const {
+        email = '',
+        uid = '',
+        photoURL = '',
+      } = user ?? { email: '', uid: '', photoURL: '' };
+      await createUser({ email, uid, photoURL }, username);
       router.push(GOALS_ROUTES.GOAL_FEED);
       setLoading(false);
     } else {
