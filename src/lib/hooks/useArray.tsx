@@ -22,7 +22,6 @@ export function useArray<T>(initialValue: T[]) {
     removeMany,
     push,
     remove,
-
     exists,
     get,
     set,

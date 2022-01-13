@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { Button, Input } from '@components/UI';
 import type { NextPage } from 'next';
 import { useForm } from 'react-hook-form';
@@ -9,7 +9,10 @@ import { IoRemoveCircleOutline } from 'react-icons/io5';
 import { FormLabelDescription } from '@components/UI';
 import { useRouter } from 'next/router';
 import { Goal } from '@lib/modals';
-import { useUserContext } from '@lib/context/user';
+import GenericList from '@components/UI/GenericList/GenericList';
+import type { CategoryItem } from '@lib/modals';
+import styles from './create.module.scss';
+import SelectCategories from 'pages/user/categories';
 
 const INPUT_GROUP_SIZE = 2;
 
@@ -65,9 +68,68 @@ const LABELS = ['title', 'description'];
 
 const getIsEven = (num: number) => num % 2 === 0;
 
+const LIFE_STYLE_ITEMS = [
+  {
+    id: '1',
+    title: 'Lifestyle',
+    value: 'lifestyle',
+  },
+  {
+    id: '2',
+    title: 'Health',
+    value: 'health',
+  },
+  {
+    id: '3',
+    title: 'Fitness',
+    value: 'fitness',
+  },
+  {
+    id: '4',
+    title: 'Relationship',
+    value: 'relationship',
+  },
+  {
+    id: '5',
+    title: 'Career',
+    value: 'career',
+  },
+  {
+    id: '6',
+    title: 'Money',
+    value: 'money',
+  },
+];
+const DEVELOPMENT_ITEMS = [
+  {
+    id: 'a',
+    title: 'Development',
+    value: 'development',
+  },
+  {
+    id: 'b',
+    title: 'Design',
+    value: 'design',
+  },
+  {
+    id: 'c',
+    title: 'Business',
+    value: 'business',
+  },
+  {
+    id: 'd',
+    title: 'Javascript',
+    value: 'javascript',
+  },
+  {
+    id: 'e',
+    title: 'React',
+    value: 'react',
+  },
+];
+
 const CreateGoal: NextPage = () => {
   const { query } = useRouter();
-  const { user } = useUserContext();
   const {
     document: goal,
     error,
@@ -79,6 +141,13 @@ const CreateGoal: NextPage = () => {
     removeMany,
     data: stepTitles,
   } = useArray<StepInput>([STEP_INPUT, STEP_DESCRIPTION_INPUT]);
+  const {
+    data: selectedCategories,
+    push,
+    remove,
+    exists,
+  } = useArray<CategoryItem>([]);
+  const [searchTerm, setSearchTerm] = React.useState('');
   const {
     register,
     handleSubmit,
@@ -133,6 +202,34 @@ const CreateGoal: NextPage = () => {
       </span>
     ) : null;
 
+  const CategorySelectItem: React.FC = ({ category, handleOnAddCategory }) => {
+    const { title } = category;
+    console.log(handleOnAddCategory);
+    return (
+      <p
+        onClick={() => {
+          handleOnAddCategory?.(category);
+        }}
+      >
+        {title}
+      </p>
+    );
+  };
+  const handleOnAddCategory = (category) => {
+    const foundCategory = exists(category.id);
+    console.log(category);
+    if (exists(category.id)) {
+      remove(category.id);
+    } else push(category);
+  };
+  const FilteredCategories = useMemo(
+    () =>
+      LIFE_STYLE_ITEMS.filter(({ title }) =>
+        title.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    [searchTerm]
+  );
+
   return (
     <div>
       <h1 className="mb-4">Create Goal</h1>
@@ -177,10 +274,19 @@ const CreateGoal: NextPage = () => {
             explanation="Try to choose a realistic end date"
           />
           <Input
-            register={register}
             name="categories"
             type="text"
-            mode="uncontrolled"
+            mode="controlled"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {JSON.stringify(selectedCategories)}
+          <GenericList
+            className={styles.categoryListContainer}
+            items={FilteredCategories}
+            resourceName="category"
+            component={CategorySelectItem}
+            otherProps={{ handleOnAddCategory }}
           />
           <FormLabelDescription
             title="steps"

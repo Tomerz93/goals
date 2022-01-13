@@ -63,6 +63,11 @@
 
   --gap: var(--spacing-2);
 }
+[data-theme='light'] {
+  --bg: white;
+  --text-color: #333;
+  --lightest-blue: hsl(198, 82%, 17%);
+}
 html,
 body {
   padding: 0;

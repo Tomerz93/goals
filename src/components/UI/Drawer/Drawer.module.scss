@@ -16,6 +16,9 @@
     grid-column: 1 / -1;
     height: min-content;
   }
+  svg {
+    // color: var(--text-color);
+  }
 }
 .visible {
   transform: translateX(0);
@@ -23,6 +26,6 @@
 
 @media (min-width: 768px) {
   .drawerContainer {
-    display: none;
+    // display: none;
   }
 }
