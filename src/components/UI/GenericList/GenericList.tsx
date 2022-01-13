@@ -4,9 +4,10 @@ interface GenericListProps {
   items: unknown[];
   component: any;
   resourceName: string;
+  className?: string;
   el?: 'ul' | 'div';
   type?: 'grid' | 'list';
-  gap: number;
+  gap?: number;
 }
 interface gapDefinition {
   vertical: { x: number } & { y: number };
@@ -25,22 +26,24 @@ interface gapDefinition {
 const GenericList: React.FC<GenericListProps> = ({
   items,
   component: Component,
+  className = '',
   resourceName,
   el: Element = 'div',
   type = 'grid',
+  otherProps,
   gap,
 }) => {
   return (
-    <>
+    <div className={className}>
       {items.map((item) => (
         <div
           key={getUniqueId()}
           style={{ marginBlockEnd: `var(--spacing-${gap})` }}
         >
-          <Component {...{ [resourceName]: item }} />
+          <Component {...{ [resourceName]: item }} {...otherProps} />
         </div>
       ))}
-    </>
+    </div>
   );
 };
 

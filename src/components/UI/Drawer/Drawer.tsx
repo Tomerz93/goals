@@ -5,6 +5,8 @@ import React, { useEffect, useRef } from 'react';
 import styles from './Drawer.module.scss';
 import cx from 'classnames';
 import { useRouter } from 'next/router';
+import { useTheme } from 'next-themes';
+import { BsSun, BsMoon } from 'react-icons/bs';
 
 const BackDrop: React.FC<{ closeDrawer: () => void }> = ({ closeDrawer }) => (
   <div
@@ -25,6 +27,25 @@ interface AvatarUserCardProps {
   avatarUrl: string;
 }
 
+const ThemeToggler: React.FC = () => {
+  const [mounted, setMounted] = React.useState(false);
+  const { theme, setTheme } = useTheme();
+  const toggle = () =>
+    theme === 'light' ? setTheme('dark') : setTheme('light');
+  // When mounted on client, now we can show the UI
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return (
+    <div>
+      {theme === 'light' ? (
+        <BsMoon onClick={toggle} />
+      ) : (
+        <BsSun onClick={toggle} />
+      )}
+    </div>
+  );
+};
+
 const AvatarUserCard: React.FC<AvatarUserCardProps> = ({
   username,
   email,
@@ -35,6 +56,7 @@ const AvatarUserCard: React.FC<AvatarUserCardProps> = ({
     <div>
       <span style={{ display: 'block' }}>{username}</span>
       <span>{email}</span>
+      <ThemeToggler />
     </div>
   </FlexContainer>
 );
