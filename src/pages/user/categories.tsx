@@ -86,8 +86,8 @@ type SelectedCategories = CategoryMap;
 
 const SelectCategories: NextPageWithLayout = () => {
   const { data, set, push, remove, exists } = useArray<CategoryItem>([]);
-  const { user, isLoading } = useUserContext();
-  const { call, isSuccess } = useAsyncCall(addTag);
+  const { user, isLoading, error: userError } = useUserContext();
+  const { call, error, isSuccess } = useAsyncCall(addTag);
   const router = useRouter();
   const navigateToFeed = () => router.push(GOALS_ROUTES.GOAL_FEED);
 

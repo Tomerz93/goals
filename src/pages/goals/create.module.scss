@@ -1,0 +1,21 @@
+.categoryListContainer {
+  display: grid;
+  background-color: #445565;
+  max-block-size: 200px;
+  overflow-y: scroll;
+  > *:where(:not(:last-child)) {
+    border-bottom: #9ec9f1 2px solid;
+  }
+  > * {
+    font-size: var(--fs-200);
+    padding: var(--spacing-2);
+    transition: background 0.2s ease-in-out;
+    cursor: pointer;
+    &:hover {
+      background-color: #2a3a48;
+    }
+  }
+}
+// .flow > *:where(:not(:first-child)) {
+//   margin-top: var(--flow-space, 1rem);
+// }
