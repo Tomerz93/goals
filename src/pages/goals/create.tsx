@@ -1,18 +1,16 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import { Button, Input } from '@components/UI';
-import type { NextPage } from 'next';
+import { IoIosAdd } from 'react-icons/io';
 import { useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
+import { Badge, Button, Input } from '@components/UI';
+import type { NextPage } from 'next';
 import { useArray, useLoadFIreBaseDocument } from '@lib/hooks';
-import { IoIosAdd } from 'react-icons/io';
 import { IoRemoveCircleOutline } from 'react-icons/io5';
 import { FormLabelDescription } from '@components/UI';
 import { useRouter } from 'next/router';
-import { Goal } from '@lib/modals';
-import GenericList from '@components/UI/GenericList/GenericList';
-import type { CategoryItem } from '@lib/modals';
+import type { Goal, CategoryItem } from '@lib/modals';
+import { InputError } from '@components/UI/Input';
 import styles from './create.module.scss';
-import SelectCategories from 'pages/user/categories';
 
 const INPUT_GROUP_SIZE = 2;
 
@@ -128,13 +126,14 @@ const DEVELOPMENT_ITEMS = [
   },
 ];
 
+const CATEGORIES = [...LIFE_STYLE_ITEMS, ...DEVELOPMENT_ITEMS];
+
 const CreateGoal: NextPage = () => {
   const { query } = useRouter();
-  const {
-    document: goal,
-    error,
-    isLoading,
-  } = useLoadFIreBaseDocument<Goal>('goals', query?.id as string);
+  const { document: goal } = useLoadFIreBaseDocument<Goal>(
+    'goals',
+    query?.id as string
+  );
   const {
     addMany,
     set,
@@ -144,8 +143,9 @@ const CreateGoal: NextPage = () => {
   const {
     data: selectedCategories,
     push,
-    remove,
+    removeById,
     exists,
+    set: setCategories,
   } = useArray<CategoryItem>([]);
   const [searchTerm, setSearchTerm] = React.useState('');
   const {
@@ -162,7 +162,7 @@ const CreateGoal: NextPage = () => {
         goal;
       setValue('title', title);
       setValue('description', description);
-      setValue('categories', categories[0].title);
+      setCategories(categories);
       setValue('estimatedCompletionDate', estimatedCompletionDate);
       if (steps.length) set(generateStepInputs(steps.length));
       isStepsPopulate.current = true;
@@ -189,42 +189,31 @@ const CreateGoal: NextPage = () => {
   const addStepGroup = () => addMany(generateStepInputs(1));
 
   const removeGroupAtIndex = (index: number) => removeMany([index, index - 1]);
+
   const getIsMinLength = (minLength: number) => (val: string) =>
     val.length >= minLength || `Must be at least ${minLength} characters`;
 
-  const InputError: React.FC<{ message: string }> = ({ message }) =>
-    message ? (
-      <span
-        className="my-2"
-        style={{ display: 'block', color: 'var(--danger)' }}
-      >
-        {message}
-      </span>
-    ) : null;
-
-  const CategorySelectItem: React.FC = ({ category, handleOnAddCategory }) => {
+  const CategorySelectItem: React.FC<{
+    category: CategoryItem;
+    handleOnAddCategory: (category: CategoryItem) => void;
+  }> = ({ category, handleOnAddCategory }) => {
     const { title } = category;
-    console.log(handleOnAddCategory);
     return (
-      <p
-        onClick={() => {
-          handleOnAddCategory?.(category);
-        }}
+      <Button
+        variant="styleless"
+        handleOnClick={() => handleOnAddCategory?.(category)}
       >
-        {title}
-      </p>
+        <p>{title}</p>
+      </Button>
     );
   };
-  const handleOnAddCategory = (category) => {
-    const foundCategory = exists(category.id);
-    console.log(category);
-    if (exists(category.id)) {
-      remove(category.id);
-    } else push(category);
+  const handleOnAddCategory = (category: CategoryItem) => {
+    if (exists(category.id)) removeById(category.id);
+    else push(category);
   };
-  const FilteredCategories = useMemo(
+  const filteredCategories = useMemo(
     () =>
-      LIFE_STYLE_ITEMS.filter(({ title }) =>
+      CATEGORIES.filter(({ title }) =>
         title.toLowerCase().includes(searchTerm.toLowerCase())
       ),
     [searchTerm]
@@ -260,7 +249,7 @@ const CreateGoal: NextPage = () => {
               name="description"
               type="textarea"
               mode="uncontrolled"
-              error={errors?.title}
+              error={errors?.description}
               explanation="This will be be the title posted on the feed"
             />
             <InputError message={errors.description?.message} />
@@ -277,17 +266,28 @@ const CreateGoal: NextPage = () => {
             name="categories"
             type="text"
             mode="controlled"
+            placeholder="Search for a category"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          {JSON.stringify(selectedCategories)}
-          <GenericList
-            className={styles.categoryListContainer}
-            items={FilteredCategories}
-            resourceName="category"
-            component={CategorySelectItem}
-            otherProps={{ handleOnAddCategory }}
-          />
+          <div className={styles.categoryListContainer}>
+            {filteredCategories.map((category) => (
+              <CategorySelectItem
+                key={category.id}
+                category={category}
+                handleOnAddCategory={handleOnAddCategory}
+              />
+            ))}
+          </div>
+          {selectedCategories.length > 0 && (
+            <div>
+              {selectedCategories.map(({ title }) => (
+                <Badge variant="success" key={title}>
+                  {title}
+                </Badge>
+              ))}
+            </div>
+          )}
           <FormLabelDescription
             title="steps"
             description="You must add at least one step, it is good to be able to spread
@@ -322,7 +322,6 @@ const CreateGoal: NextPage = () => {
             </div>
           ))}
         </div>
-
         <Button type="button" variant="minimal" handleOnClick={addStepGroup}>
           <IoIosAdd />
           Add Goal

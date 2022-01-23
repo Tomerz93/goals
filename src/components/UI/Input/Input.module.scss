@@ -3,8 +3,7 @@
   width: 100%;
   border-bottom: 2px solid #fff;
   margin-block-start: var(--spacing-2);
-  background-color: #445565;
-
+  background-color: var(--input-bg);
   color: #fff;
   transition: border 0.2s ease-in-out;
   &:focus-visible {
@@ -14,10 +13,13 @@
   &.Error {
     border-bottom: 2px solid var(--danger);
   }
+  &::placeholder {
+    color: rgb(202, 202, 202);
+  }
 }
 .textArea {
   margin-block-start: var(--spacing-2);
-  background-color: #445565;
+  background-color: var(--input-bg);
   resize: none;
 }
 .Label {

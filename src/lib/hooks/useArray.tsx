@@ -10,6 +10,8 @@ export function useArray<T>(initialValue: T[]) {
   const removeFirst = () => setData((prev) => [...prev.slice(1)]);
   const remove = (index: number) =>
     setData((prev) => prev.filter((item, i) => i !== index));
+  const removeById = (id: string) =>
+    setData((prev) => prev.filter(({ id: itemId }) => itemId !== id));
   const pop = () => setData((prev) => [...prev.slice(0, -1)]);
   const exists = (id: string) => data.some((item) => item.id === id);
   const get = (id: string) => data.find((item) => item.id === id);
@@ -22,6 +24,7 @@ export function useArray<T>(initialValue: T[]) {
     removeMany,
     push,
     remove,
+    removeById,
     exists,
     get,
     set,

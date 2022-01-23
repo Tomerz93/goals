@@ -9,6 +9,7 @@ interface InputProps {
   error?: boolean;
   labelText?: string;
   required?: boolean;
+  placeholder?: string;
   register?: UseFormRegister<FieldValues>;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   mode?: 'controlled' | 'uncontrolled';
@@ -30,6 +31,7 @@ const Input: React.FC<InputProps> = ({
   register,
   explanation,
   validation,
+  placeholder,
 }) => {
   const classes = cx({
     [styles.Input]: true,
@@ -63,6 +65,7 @@ const Input: React.FC<InputProps> = ({
           type={type}
           value={value}
           onChange={onChange}
+          placeholder={placeholder}
         />
       );
     }

@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDoc, collection, doc, writeBatch, setDoc, getDocs, query, where, limit, CollectionReference } from 'firebase/firestore';
+import { getFirestore, getDoc, collection, doc, writeBatch, setDoc, getDocs, query, where, limit, CollectionReference, collectionGroup } from 'firebase/firestore';
 import { getAuth, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { COLLECTION_NAMES } from './constants';
 import { CategoryItem } from '@lib/modals';
@@ -36,7 +36,8 @@ const goalsCollection = collection(db, COLLECTION_NAMES.GOALS) as CollectionRefe
 
 const userNameCollections = collection(db, COLLECTION_NAMES.USERNAMES);
 
-export const logout = (): Promise<void> => signOut(auth);
+
+const logout = (): Promise<void> => signOut(auth);
 
 const logInWithProvider = async (provider = googleAuthProvider): Promise<void> => {
   await signInWithPopup(auth, provider);
@@ -114,6 +115,35 @@ const getSubCollectionByUser = async (userId: string) => {
   }
 }
 
+const getCommentsCountForGoal = async (goalId: string) => {
+  const commentsCollection = collection(db, COLLECTION_NAMES.GOALS, goalId, COLLECTION_NAMES.COMMENTS);
+  return (await getDocs(query(commentsCollection))).size
+}
+
+const getComments = async (goalId: string) => {
+  const commentsCollection = collection(db, COLLECTION_NAMES.GOALS, goalId, COLLECTION_NAMES.COMMENTS);
+  const commentsDoc = await getDocs(query(commentsCollection))
+  if (!commentsDoc.empty) {
+    return commentsDoc.docs.map(doc => ({ ...doc.data(), id: doc.id }))
+  }
+  return []
+}
+
+const getAllGoals = async () => {
+  const queryResult = query(goalsCollection)
+  const goals = (await getDocs(queryResult)).docs
+  const goalsWithUsers = []
+  for await (const goal of goals) {
+    const user = (await getDoc(doc(userCollection, goal.data().userId))).data()
+    const commentsCount = await getCommentsCountForGoal(goal.id) || 0
+    goalsWithUsers.push({ ...goal.data(), id: goal.id, user, commentsCount })
+  }
+  return goalsWithUsers
+}
+
+
+
+
 type userData = {
   email: string
   uid: string
@@ -137,4 +167,4 @@ const createUser = async (userData: userData, username: string) => {
   }
 }
 
-export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, getSubCollectionByUser, getRef, getGoalsByUser, getGoalById, getCollection, userCollection };
+export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, logout, getSubCollectionByUser, getRef, getGoalsByUser, getGoalById, getCollection, userCollection, getAllGoals, getComments };

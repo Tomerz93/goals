@@ -5,7 +5,7 @@ import { capitalize } from '@lib/utils/helpers';
 
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'gradient' | 'tab' | 'minimal';
+  variant?: 'primary' | 'gradient' | 'tab' | 'minimal' | 'styleless';
   icon?: string;
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
@@ -29,6 +29,7 @@ const Button: React.FC<ButtonProps> = ({
     [styles.btn]: true,
     [styles.btnSelected]: isSelected,
     [styles.btnTab]: variant === 'tab',
+    [styles.btnStyleless]: variant === 'styleless',
     [styles.btnMinimal]: variant === 'minimal',
     [styles[`btn${capitalize(variant)}`]]: true,
     [styles.disabled]: disabled,

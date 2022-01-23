@@ -1,11 +1,22 @@
 .navigationLinksContainer {
-  > a {
-    text-transform: capitalize;
-    display: block;
+  > * {
+    display: flex;
+    align-items: center;
     padding-inline-start: var(--spacing-4);
     padding-block: var(--spacing-3);
+    cursor: pointer;
     &:hover {
       background-color: hsl(203 33% 22% + 20%);
     }
+  }
+  svg {
+    margin-inline-end: var(--spacing-2);
+  }
+  > a {
+    text-transform: capitalize;
+    display: block;
+  }
+  button {
+    padding: 0;
   }
 }

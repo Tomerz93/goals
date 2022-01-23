@@ -4,44 +4,51 @@ import { GoComment } from 'react-icons/go';
 import { FcLike } from 'react-icons/fc';
 import { BiUserPlus } from 'react-icons/bi';
 import styles from './GoalCard.module.scss';
+import Link from 'next/link';
 
 interface UserSmall {
   id: string;
   username: string;
-  avatar: string;
+  avatarUrl: string;
 }
 
 interface Goal {
-  owner: string;
+  userId: string;
+  title: string;
   id: string;
   avatar: UserSmall;
   description: string;
   likes: number;
-  comments: number;
+  commentsCount: number;
 }
+type GoalWithUserSmall = Goal & { user: UserSmall };
 
 interface GoalCardProps {
-  goal?: Goal;
+  goal: GoalWithUserSmall;
 }
 
-const GoalCard: React.FC<GoalCardProps> = () => (
+const GoalCard: React.FC<GoalCardProps> = ({
+  goal: { description, user, commentsCount, id },
+}) => (
   <div className={styles.GoalCardContainer}>
     <FlexContainer gap="4">
-      <Avatar round />
+      <Avatar src={user?.avatarUrl} round />
       <FlexContainer direction="column">
-        <h5>Some really long name</h5>
+        <h5>{user?.username}</h5>
         <Button style={{ alignSelf: 'flex-start' }}>
           Follow
           <BiUserPlus />
         </Button>
       </FlexContainer>
     </FlexContainer>
-    <p>
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Cum omnis error,
-      dolorem nostrum sunt rerum. Quia laboriosam enim facilis atque.
-    </p>
+    <p>{description}</p>
     <FlexContainer alignItems="center" gap="3" justifyContent="end">
-      <GoComment />
+      <FlexContainer alignItems="center">
+        <span>{commentsCount}</span>
+        <Link href={`goals/${id}/comments`}>
+          <GoComment />
+        </Link>
+      </FlexContainer>
       <FcLike />
     </FlexContainer>
   </div>

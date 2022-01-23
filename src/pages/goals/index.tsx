@@ -2,17 +2,36 @@ import type { NextPage } from 'next';
 import styles from './index.module.scss';
 import { GoalCard } from '@components/Goals';
 import { useUserContext } from '@lib/context/user';
-import { useRef } from 'react';
-import { useIntersectionObserver } from '@lib/hooks/useIntersectionObersver';
-import { FlexContainer } from '@components/UI';
+import { useEffect, useRef, useState } from 'react';
+import { getAllGoals } from '@lib/firebase';
+import GenericList from '@components/UI/GenericList/GenericList';
+import { Modal } from '@components/UI';
 
 const Feed: NextPage = () => {
   const { user } = useUserContext();
   const ref = useRef(null);
-  // const { isIntersecting } = useIntersectionObserver(ref, { threshold: 0.5 });
+  const [goals, setGoals] = useState([]);
+  useEffect(() => {
+    const fetch = async () => {
+      const goals = await getAllGoals();
+      console.log(goals);
+      setGoals(goals);
+    };
+    fetch();
+  }, []);
   return (
-    <div className={styles.feedContainer}>
-      <GoalCard />
+    <div className={`${styles.feedContainer} mt-5`}>
+      <div>
+        {goals.length > 0 && (
+          <GenericList
+            items={goals}
+            gap={4}
+            component={GoalCard}
+            resourceName="goal"
+          />
+        )}
+      </div>
+      <Modal>children</Modal>
     </div>
   );
 };

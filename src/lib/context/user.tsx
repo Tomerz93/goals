@@ -32,6 +32,7 @@ const UserProvider: FC = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   useEffect(() => {
+    console.log('here');
     if (!authUser) return;
     setIsLoading(true);
     setError('');

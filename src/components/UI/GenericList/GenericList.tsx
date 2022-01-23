@@ -8,6 +8,7 @@ interface GenericListProps {
   el?: 'ul' | 'div';
   type?: 'grid' | 'list';
   gap?: number;
+  otherProps?: any;
 }
 interface gapDefinition {
   vertical: { x: number } & { y: number };

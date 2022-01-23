@@ -67,7 +67,7 @@ const Feed: NextPage = () => {
       <Tabs activeTabIndex={activeTabIndex} handleOnClick={setActiveTabIndex}>
         <TabList>
           <TabButton>In Progress</TabButton>
-          <TabButton>completed</TabButton>
+          <TabButton>Completed</TabButton>
         </TabList>
         <TabsPanelList>
           <TabPanel>

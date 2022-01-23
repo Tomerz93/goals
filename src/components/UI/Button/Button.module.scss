@@ -11,6 +11,9 @@
     color: #333;
   }
 }
+.btnStyleless {
+  background: transparent;
+}
 .btnPrimary {
   background-color: var(--primary);
   color: #fff;

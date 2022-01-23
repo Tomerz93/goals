@@ -1,21 +1,13 @@
-import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { BsGoogle } from 'react-icons/bs';
 import { Button, LayoutWithoutHeader } from '@components/UI';
 import { logInWithProvider } from '@lib/firebase';
 import { USER_ROUTES } from '@lib/routes';
 import styles from './Login.module.scss';
-import { useUserContext } from '@lib/context/user';
 import type { NextPageWithLayout } from '@lib/modals/generic';
 
 const Login: NextPageWithLayout = () => {
   const router = useRouter();
-  const { user } = useUserContext();
-  useEffect(() => {
-    if (!user) return;
-    if (user?.username) router.push(USER_ROUTES.USER_CREATE);
-    else router.push(USER_ROUTES.USER_CREATE);
-  }, [user]);
   const handleOnLogin = async () => {
     await logInWithProvider();
     router.push(USER_ROUTES.USER_CREATE);

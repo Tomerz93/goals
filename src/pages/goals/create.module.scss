@@ -1,10 +1,12 @@
 .categoryListContainer {
   display: grid;
-  background-color: #445565;
+  background-color: var(--input-bg);
   max-block-size: 200px;
   overflow-y: scroll;
+  color: var(--text-color);
   > *:where(:not(:last-child)) {
     border-bottom: #9ec9f1 2px solid;
+    padding-block-end: var(--spacing-2);
   }
   > * {
     font-size: var(--fs-200);
@@ -16,6 +18,3 @@
     }
   }
 }
-// .flow > *:where(:not(:first-child)) {
-//   margin-top: var(--flow-space, 1rem);
-// }

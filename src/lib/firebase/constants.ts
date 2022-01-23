@@ -2,5 +2,6 @@ export const COLLECTION_NAMES = {
     USERS: 'users',
     USERNAMES: 'usernames',
     CATEGORIES: 'categories',
-    GOALS: 'goals'
+    GOALS: 'goals',
+    COMMENTS: 'comments'
 }

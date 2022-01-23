@@ -9,9 +9,10 @@
 :root {
   --dark-green-clr: 203 33% 22%;
   /* color definitions */
+  --white: #fff;
   --red: hsl(0, 61%, 65%);
   --purple: hsl(263, 78%, 47%);
-  --green: hsl(130, 61%, 65%);
+  --green: hsl(130, 34%, 51%);
   --dark-green: hsl(var(--dark-green-clr));
   --faded-gray: hsl(209, 20%, 33%);
   --lightest-gray: hsl(0, 0%, 93%);
@@ -24,7 +25,9 @@
   --danger: var(--red);
   --success: var(--green);
   --bg: var(--dark-blue);
-  --text-color: #fff;
+  --text-light: #fff;
+  --text-color: var(--text-light);
+  --text-dark: #333;
 
   /* font-sizes */
   --fs-900: 1.802rem;
@@ -62,11 +65,15 @@
   --header-height: 70px;
 
   --gap: var(--spacing-2);
+
+  // inputs
+  --input-bg: var(--faded-gray);
 }
 [data-theme='light'] {
   --bg: white;
   --text-color: #333;
   --lightest-blue: hsl(198, 82%, 17%);
+  --input-bg: hsl(209, 20%, 21%);
 }
 html,
 body {
@@ -185,6 +192,22 @@ $spacing: (
   '6': var(--spacing-6),
 );
 
+$colors: (
+  'primary': var(--primary),
+  'secondary': var(--secondary),
+  'danger': var(--danger),
+  'success': var(--success),
+  'dark-green': var(--dark-green),
+  'faded-gray': var(--faded-gray),
+  'lightest-gray': var(--lightest-gray),
+  'lightest-blue': var(--lightest-blue),
+  'light-blue': var(--light-blue),
+  'dark-blue': var(--dark-blue),
+  'light-gray': var(--light-gray),
+  'bg': var(--bg),
+  'text-color': var(--text-color),
+);
+
 @each $size, $value in $spacing {
   .mb-#{$size} {
     margin-block-end: $value;
@@ -205,5 +228,12 @@ $spacing: (
   .my-#{$size} {
     margin-block-start: $value;
     margin-block-end: $value;
+  }
+}
+
+@each $color, $value in $colors {
+  .variant-#{$color} {
+    background-color: $value;
+    color: var(--text-color);
   }
 }

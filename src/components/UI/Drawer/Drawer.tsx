@@ -1,24 +1,13 @@
-import { useUserContext } from '@lib/context/user';
-import { Avatar, NavigationLinks } from '@components/UI';
-import FlexContainer from '../FlexContainer/FlexContainer';
 import React, { useEffect, useRef } from 'react';
-import styles from './Drawer.module.scss';
 import cx from 'classnames';
+import { useUserContext } from '@lib/context/user';
 import { useRouter } from 'next/router';
-import { useTheme } from 'next-themes';
-import { BsSun, BsMoon } from 'react-icons/bs';
+import { Avatar, NavigationLinks, ThemeToggler } from '@components/UI';
+import FlexContainer from '../FlexContainer/FlexContainer';
+import styles from './Drawer.module.scss';
 
 const BackDrop: React.FC<{ closeDrawer: () => void }> = ({ closeDrawer }) => (
-  <div
-    onClick={closeDrawer}
-    style={{
-      position: 'fixed',
-      inset: '0',
-      width: '100%',
-      height: '100%',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    }}
-  />
+  <div onClick={closeDrawer} className={styles.backdrop} />
 );
 
 interface AvatarUserCardProps {
@@ -27,66 +16,43 @@ interface AvatarUserCardProps {
   avatarUrl: string;
 }
 
-const ThemeToggler: React.FC = () => {
-  const [mounted, setMounted] = React.useState(false);
-  const { theme, setTheme } = useTheme();
-  const toggle = () =>
-    theme === 'light' ? setTheme('dark') : setTheme('light');
-  // When mounted on client, now we can show the UI
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
-  return (
-    <div>
-      {theme === 'light' ? (
-        <BsMoon onClick={toggle} />
-      ) : (
-        <BsSun onClick={toggle} />
-      )}
-    </div>
-  );
-};
-
 const AvatarUserCard: React.FC<AvatarUserCardProps> = ({
   username,
   email,
   avatarUrl,
 }) => (
-  <FlexContainer styles={{ zIndex: 2, padding: 'var(--spacing-2)' }}>
+  <FlexContainer className={styles.avatarUserCard}>
     <Avatar src={avatarUrl} round />
-    <div>
-      <span style={{ display: 'block' }}>{username}</span>
-      <span>{email}</span>
+    <FlexContainer alignItems="center" gap="6">
+      <div>
+        <span style={{ display: 'block' }}>{username}</span>
+        <span>{email}</span>
+      </div>
       <ThemeToggler />
-    </div>
+    </FlexContainer>
   </FlexContainer>
 );
 
-const Drawer: React.FC<{ isVisible: boolean; toggle: () => void }> = ({
-  isVisible,
-  toggle,
-}) => {
-  const { user } = useUserContext();
-  const router = useRouter();
-  const { pathname } = router;
-  const currentPath = useRef(pathname);
-  useEffect(() => {
-    if (currentPath.current !== pathname) {
-      if (isVisible) toggle();
-      currentPath.current = pathname;
-    }
-  }, [pathname]);
+interface DrawerProps {
+  isVisible: boolean;
+  toggle: () => void;
+}
 
+const Drawer: React.FC<DrawerProps> = ({ isVisible, toggle }) => {
+  const { user } = useUserContext();
   if (!user) return null;
+
   const drawerClasses = cx({
     [styles.drawerContainer]: true,
     [styles.visible]: isVisible,
   });
+  const toggleDrawer = () => (isVisible ? toggle() : null);
   return (
     <>
       {isVisible && <BackDrop closeDrawer={toggle} />}
       <div className={drawerClasses}>
         <AvatarUserCard {...user} />
-        <NavigationLinks />
+        <NavigationLinks showIcons toggle={toggleDrawer} />
       </div>
     </>
   );
