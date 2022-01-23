@@ -13,6 +13,7 @@ interface InputProps {
   register?: UseFormRegister<FieldValues>;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   mode?: 'controlled' | 'uncontrolled';
+  rowNum?: 2 | 4 | 6 | 8 | 10 | 12;
   explanation?: string;
   validation?: {
     required?: boolean | string;
@@ -32,6 +33,7 @@ const Input: React.FC<InputProps> = ({
   explanation,
   validation,
   placeholder,
+  rowNum = 4,
 }) => {
   const classes = cx({
     [styles.Input]: true,
@@ -42,9 +44,9 @@ const Input: React.FC<InputProps> = ({
   const { required, ...validationFunc } = validation ?? {};
   const getInput = () => {
     if (type === 'textarea') {
-      return (
+      return mode === 'uncontrolled' ? (
         <textarea
-          rows={4}
+          rows={rowNum}
           className={classes}
           name={name}
           {...register(name, {
@@ -53,6 +55,14 @@ const Input: React.FC<InputProps> = ({
               ...validationFunc,
             },
           })}
+        />
+      ) : (
+        <textarea
+          rows={rowNum}
+          className={classes}
+          name={name}
+          value={value}
+          onChange={onChange}
         />
       );
     }

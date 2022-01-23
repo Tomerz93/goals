@@ -1,14 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import cx from 'classnames';
 import { useUserContext } from '@lib/context/user';
-import { useRouter } from 'next/router';
 import { Avatar, NavigationLinks, ThemeToggler } from '@components/UI';
 import FlexContainer from '../FlexContainer/FlexContainer';
 import styles from './Drawer.module.scss';
-
-const BackDrop: React.FC<{ closeDrawer: () => void }> = ({ closeDrawer }) => (
-  <div onClick={closeDrawer} className={styles.backdrop} />
-);
+import BackDrop from '../Backdrop/Backdrop';
 
 interface AvatarUserCardProps {
   username: string;

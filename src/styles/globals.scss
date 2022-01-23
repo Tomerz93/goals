@@ -210,10 +210,10 @@ $colors: (
 
 @each $size, $value in $spacing {
   .mb-#{$size} {
-    margin-block-end: $value;
+    margin-block-start: $value;
   }
   .mt-#{$size} {
-    margin-block-start: $value;
+    margin-block-end: $value;
   }
   .mr-#{$size} {
     margin-inline-end: $value;

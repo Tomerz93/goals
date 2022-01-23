@@ -21,7 +21,7 @@ interface Goal {
   likes: number;
   commentsCount: number;
 }
-type GoalWithUserSmall = Goal & { user: UserSmall };
+export type GoalWithUserSmall = Goal & { user: UserSmall };
 
 interface GoalCardProps {
   goal: GoalWithUserSmall;

@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDoc, collection, doc, writeBatch, setDoc, getDocs, query, where, limit, CollectionReference, collectionGroup } from 'firebase/firestore';
+import { getFirestore, getDoc, collection, doc, writeBatch, setDoc, getDocs, query, where, limit, CollectionReference, collectionGroup, deleteDoc, addDoc } from 'firebase/firestore';
 import { getAuth, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { COLLECTION_NAMES } from './constants';
 import { CategoryItem } from '@lib/modals';
@@ -60,7 +60,8 @@ interface CollectionKeys {
 
 const COLLECTIONS = {
   [COLLECTION_NAMES.GOALS]: goalsCollection,
-  [COLLECTION_NAMES.USERS]: userCollection
+  [COLLECTION_NAMES.USERS]: userCollection,
+  [COLLECTION_NAMES.COMMENTS]: (goalId: string) => collection(db, COLLECTION_NAMES.GOALS, goalId, COLLECTION_NAMES.COMMENTS)
 }
 const getCollection = (key: string) => COLLECTIONS[key]
 
@@ -77,7 +78,10 @@ const getRefIfExists = async (collectionName: string, ref: string) => {
     const docSnap = await getDoc(documentRef);
     if (docSnap.exists()) {
       const document = await getDoc(documentRef)
-      return document?.data()
+      return {
+        ...document?.data(),
+        id: document?.id
+      }
     } else {
       return null
     }
@@ -141,6 +145,29 @@ const getAllGoals = async () => {
   return goalsWithUsers
 }
 
+const getGoalWithUserAndComments = async (goalId: string) => {
+  const goal = await getGoalById(goalId)
+  const user = await getDocById(COLLECTION_NAMES.USERS, goal.userId)
+  const comments = await getComments(goalId)
+  // TODO refactor to reduce 
+  const commentsWithUsers = await Promise.all(comments.map(async comment => {
+    const user = await getDocById(COLLECTION_NAMES.USERS, comment.userId)
+    console.log(user);
+    return { ...comment, user }
+  }
+  ))
+  return { goal, user, comments: commentsWithUsers }
+}
+const addComment = async (goalId: string, comment: any) => {
+  const commentsCollection = collection(db, COLLECTION_NAMES.GOALS, goalId, COLLECTION_NAMES.COMMENTS);
+  const docRef = await addDoc(commentsCollection, comment)
+  return docRef.id
+}
+
+const removeComment = async (goalId: string, commentId: string) => {
+  const commentsCollection = collection(db, COLLECTION_NAMES.GOALS, goalId, COLLECTION_NAMES.COMMENTS);
+  return await deleteDoc(doc(commentsCollection, commentId))
+}
 
 
 
@@ -167,4 +194,4 @@ const createUser = async (userData: userData, username: string) => {
   }
 }
 
-export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, logout, getSubCollectionByUser, getRef, getGoalsByUser, getGoalById, getCollection, userCollection, getAllGoals, getComments };
+export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, logout, getSubCollectionByUser, getRef, getGoalsByUser, getGoalById, getCollection, userCollection, getAllGoals, getComments, getGoalWithUserAndComments, addComment, removeComment };

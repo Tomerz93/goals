@@ -2,27 +2,22 @@ import type { NextPage } from 'next';
 import styles from './index.module.scss';
 import { GoalCard } from '@components/Goals';
 import { useUserContext } from '@lib/context/user';
-import { useEffect, useRef, useState } from 'react';
 import { getAllGoals } from '@lib/firebase';
 import GenericList from '@components/UI/GenericList/GenericList';
-import { Modal } from '@components/UI';
+import { useAsyncCall } from '@lib/hooks/useAsyncCall';
+import { GoalWithUserSmall } from '@components/Goals/GoalCard/GoalCard';
 
 const Feed: NextPage = () => {
   const { user } = useUserContext();
-  const ref = useRef(null);
-  const [goals, setGoals] = useState([]);
-  useEffect(() => {
-    const fetch = async () => {
-      const goals = await getAllGoals();
-      console.log(goals);
-      setGoals(goals);
-    };
-    fetch();
-  }, []);
+  const { data: goals, isLoading } = useAsyncCall<GoalWithUserSmall[]>(
+    getAllGoals,
+    true
+  );
+  if (isLoading || !goals) return <div>Loading...</div>;
   return (
     <div className={`${styles.feedContainer} mt-5`}>
       <div>
-        {goals.length > 0 && (
+        {goals?.length > 0 && (
           <GenericList
             items={goals}
             gap={4}
@@ -31,7 +26,6 @@ const Feed: NextPage = () => {
           />
         )}
       </div>
-      <Modal>children</Modal>
     </div>
   );
 };

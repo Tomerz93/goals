@@ -10,7 +10,6 @@ interface AuthCheckProps {
 const AuthCheck: React.FC<AuthCheckProps> = ({ children }) => {
   const router = useRouter();
   const { pathname } = router;
-  console.log(pathname);
   const { user, isFetching } = useWithAuthContext();
   useEffect(() => {
     if (!user && !isFetching) {

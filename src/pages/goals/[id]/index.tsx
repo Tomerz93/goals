@@ -6,6 +6,7 @@ import { Goal } from '@lib/modals';
 import type { Timestamp } from 'firebase/firestore';
 import { formatDate, getDateToDateToNow } from 'utils/date';
 import { Steps } from '@components/Goals';
+import Link from 'next/link';
 
 const Label: React.FC<{ title: string }> = ({ title, children }) => (
   <div>
@@ -52,6 +53,7 @@ const ShowGoal: NextPage = () => {
         {categories?.length > 0 &&
           categories.map(({ title }) => <p key={title}>{title}</p>)}
       </Label>
+      <Link href={`/goals/create?id=${query?.id}`}>Edit</Link>
     </div>
   );
 };

@@ -1,12 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-export const useAsyncCall = (
+export function useAsyncCall<T>(
     asyncCall: (...args: any) => Promise<void>,
-) => {
-    const [data, setData] = useState(null)
+    fireOnMount?: boolean,
+) {
+    const [data, setData] = useState<T | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
     const [error, setError] = useState<any>('')
+    useEffect(() => {
+        (async () => {
+            if (fireOnMount) {
+                setIsLoading(true)
+                try {
+                    const data = await asyncCall()
+                    setIsSuccess(true)
+                    setError('')
+                    setIsLoading(false)
+                    setData(data)
+
+                } catch (error) {
+                    setIsLoading(false)
+                    setError(error?.message)
+                }
+            }
+        })()
+    }, [])
     const call = async (...args: any) => {
         setIsLoading(true)
         try {
