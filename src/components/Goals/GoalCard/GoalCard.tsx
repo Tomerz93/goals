@@ -35,19 +35,21 @@ const GoalCard: React.FC<GoalCardProps> = ({
   goal: { description, user, commentsCount, id, likes },
 }) => {
   const { user: loggedUser } = useUserContext();
-  const { data: goalLikes, push, remove } = useArray(likes ?? []);
+  const { data: goalLikes, set } = useArray(likes ?? []);
 
   const like = async () => {
     if (loggedUser) {
-      push(loggedUser.id);
-      updateGoalLikes(id, likes);
+      const goalsLikesCopy = [...goalLikes, loggedUser.id];
+      set(goalsLikesCopy);
+      updateGoalLikes(id, goalsLikesCopy);
     }
   };
   const unLike = async () => {
     if (loggedUser) {
       const index = goalLikes.indexOf(loggedUser.id);
-      remove(index);
-      updateGoalLikes(id, goalLikes);
+      const goalsLikesCopy = [...goalLikes].filter((_, idx) => idx !== index);
+      set(goalsLikesCopy);
+      updateGoalLikes(id, goalsLikesCopy);
     }
   };
 
