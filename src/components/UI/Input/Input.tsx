@@ -19,6 +19,7 @@ interface InputProps {
     required?: boolean | string;
     getIsMinLength?: (val: string) => string | boolean;
   };
+  ref?: React.Ref<HTMLInputElement> | React.RefObject<HTMLTextAreaElement>;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -63,6 +64,7 @@ const Input: React.FC<InputProps> = ({
           name={name}
           value={value}
           onChange={onChange}
+          ref={ref as React.RefObject<HTMLTextAreaElement>}
         />
       );
     }

@@ -6,7 +6,7 @@ import { BiUserPlus } from 'react-icons/bi';
 import styles from './GoalCard.module.scss';
 import Link from 'next/link';
 
-interface UserSmall {
+export interface UserSmall {
   id: string;
   username: string;
   avatarUrl: string;

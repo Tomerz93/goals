@@ -2,11 +2,9 @@
 .drawerContainer {
   --drawer-bg: var(--dark-green);
   display: grid;
-  gap: var(--spacing-2);
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(12, 1fr);
-  position: fixed;
+  align-items: center;
   background-color: var(--drawer-bg);
+  position: fixed;
   height: 0%;
   min-inline-size: 100%;
   bottom: 0;
@@ -14,12 +12,8 @@
   z-index: 1001;
   transform: translateY(100%);
   transition: transform 0.3s ease-in-out;
-  > * {
-    grid-column: 1 / -1;
-    height: min-content;
-  }
   &.visible {
-    height: 30%;
+    min-height: 22%;
     transform: translateY(0);
   }
 }
@@ -34,5 +28,20 @@
   svg {
     margin-inline-start: auto;
     color: var(--lightest-gray);
+  }
+}
+.iconContainer {
+  width: 100%;
+  cursor: pointer;
+
+  padding: var(--spacing-2) var(--spacing-4);
+  display: flex;
+  align-items: center;
+  height: 100%;
+  &:hover {
+    background-color: hsl(203 33% 22% + 20%);
+  }
+  svg {
+    margin-inline-start: auto;
   }
 }

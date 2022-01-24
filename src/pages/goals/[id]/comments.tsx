@@ -6,16 +6,22 @@ import {
   getGoalWithUserAndComments,
   addComment,
   removeComment,
+  editComment,
 } from '@lib/firebase';
 import { useArray } from '@lib/hooks';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 const Comments: React.FC = ({ initialData }) => {
   const { user: currentUser } = useUserContext();
   const { goal, comments: initialComments, user } = initialData ?? {};
-  const { data: comments, push, removeById } = useArray(initialComments ?? []);
+  const {
+    data: comments,
+    push,
+    removeById,
+    replace,
+  } = useArray(initialComments ?? []);
   const [comment, setComment] = useState('');
-
+  const inputRef = useRef(null);
   const handleOnAddComments = async () => {
     if (!comment) return;
     const newCommentId = await addComment(goal.id, {
@@ -29,6 +35,14 @@ const Comments: React.FC = ({ initialData }) => {
   const handleOnRemoveComment = async (commentId: string) => {
     await removeComment(goal?.id, commentId);
     removeById(commentId);
+  };
+
+  const handleOnEdit = async (commentId: string, content: string) => {
+    console.log(commentId, content);
+    const comment = comments.find((comment) => comment.id === commentId);
+    const { userId, id } = comment;
+    await editComment(goal?.id, commentId, { id, userId, content });
+    replace(commentId, { ...comment, content });
   };
 
   return (
@@ -66,6 +80,7 @@ const Comments: React.FC = ({ initialData }) => {
               items={comments}
               otherProps={{
                 currentUserId: currentUser?.id,
+                handleOnEdit,
                 handleOnRemoveComment,
               }}
             />
