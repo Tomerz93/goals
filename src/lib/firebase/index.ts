@@ -274,6 +274,7 @@ const createUser = async (userData: userData, username: string) => {
 };
 
 const updateGoalLikes = async (goalId: string, likes: string[]) => {
+  console.log(likes);
   const goal = doc(db, COLLECTION_NAMES.GOALS, goalId);
   await updateDoc(goal, {
     likes: likes,
