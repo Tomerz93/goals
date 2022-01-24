@@ -19,6 +19,7 @@ interface InputProps {
     required?: boolean | string;
     getIsMinLength?: (val: string) => string | boolean;
   };
+  ref?: React.Ref<HTMLInputElement> | React.RefObject<HTMLTextAreaElement>;
 }
 
 const Input: React.FC<InputProps> = ({

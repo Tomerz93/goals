@@ -230,6 +230,17 @@ const removeComment = async (goalId: string, commentId: string) => {
   );
   return await deleteDoc(doc(commentsCollection, commentId));
 };
+const editComment = async (goalId: string, commentId: string, comment: any) => {
+  const commentsCollection = collection(
+    db,
+    COLLECTION_NAMES.GOALS,
+    goalId,
+    COLLECTION_NAMES.COMMENTS
+  );
+  return await setDoc(doc(commentsCollection, commentId), comment, {
+    merge: true,
+  });
+};
 
 type userData = {
   email: string;
@@ -293,4 +304,5 @@ export {
   addComment,
   removeComment,
   updateGoalLikes,
+  editComment,
 };

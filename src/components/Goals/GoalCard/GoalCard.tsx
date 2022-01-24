@@ -10,7 +10,7 @@ import Like from '@components/UI/Like/Like';
 import { updateGoalLikes } from '@lib/firebase';
 import { useArray } from '@lib/hooks';
 
-interface UserSmall {
+export interface UserSmall {
   id: string;
   username: string;
   avatarUrl: string;

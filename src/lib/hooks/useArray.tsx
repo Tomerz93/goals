@@ -9,12 +9,14 @@ export function useArray<T>(initialValue: T[]) {
   const set = (items: T[]) => setData(items);
   const removeFirst = () => setData((prev) => [...prev.slice(1)]);
   const remove = (index: number) =>
-    setData((prev) => prev.filter((item, i) => i !== index));
+    setData((prev) => prev.filter((_, i) => i !== index));
   const removeById = (id: string) =>
     setData((prev) => prev.filter(({ id: itemId }) => itemId !== id));
   const pop = () => setData((prev) => [...prev.slice(0, -1)]);
   const exists = (id: string) => data.some((item) => item.id === id);
   const get = (id: string) => data.find((item) => item.id === id);
+  const replace = (id: string, newItem: T) =>
+    setData((prev) => prev.map((item) => (item.id === id ? newItem : item)));
 
   return {
     data,
@@ -27,6 +29,7 @@ export function useArray<T>(initialValue: T[]) {
     removeById,
     exists,
     get,
+    replace,
     set,
   };
 }
