@@ -64,7 +64,6 @@ const Input: React.FC<InputProps> = ({
           name={name}
           value={value}
           onChange={onChange}
-          ref={ref as React.RefObject<HTMLTextAreaElement>}
         />
       );
     }
