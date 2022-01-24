@@ -168,7 +168,10 @@ const removeComment = async (goalId: string, commentId: string) => {
   const commentsCollection = collection(db, COLLECTION_NAMES.GOALS, goalId, COLLECTION_NAMES.COMMENTS);
   return await deleteDoc(doc(commentsCollection, commentId))
 }
-
+const editComment = async (goalId: string, commentId: string, comment: any) => {
+  const commentsCollection = collection(db, COLLECTION_NAMES.GOALS, goalId, COLLECTION_NAMES.COMMENTS);
+  return await setDoc(doc(commentsCollection, commentId), comment, { merge: true })
+}
 
 
 type userData = {
@@ -194,4 +197,4 @@ const createUser = async (userData: userData, username: string) => {
   }
 }
 
-export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, logout, getSubCollectionByUser, getRef, getGoalsByUser, getGoalById, getCollection, userCollection, getAllGoals, getComments, getGoalWithUserAndComments, addComment, removeComment };
+export { db, auth, getUserByUsername, logInWithProvider, createUser, getDocById, addTag, getRefIfExists, doc, app, logout, getSubCollectionByUser, getRef, getGoalsByUser, getGoalById, getCollection, userCollection, getAllGoals, getComments, editComment, getGoalWithUserAndComments, addComment, removeComment };

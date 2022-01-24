@@ -21,6 +21,9 @@
   margin-block-start: var(--spacing-2);
   background-color: var(--input-bg);
   resize: none;
+  &:focus {
+    border-bottom: 1px solid var(--lightest-blue);
+  }
 }
 .Label {
   display: block;
