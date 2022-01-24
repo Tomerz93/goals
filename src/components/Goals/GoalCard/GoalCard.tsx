@@ -77,7 +77,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
           likes={goalLikes}
           like={like}
           unLike={unLike}
-          userId={loggedUser!.id}
+          userId={loggedUser?.id}
         />
       </FlexContainer>
     </div>
