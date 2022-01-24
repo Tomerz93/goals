@@ -45,12 +45,9 @@ const GoalCard: React.FC<GoalCardProps> = ({
   };
   const unLike = async () => {
     if (loggedUser) {
-      // var index = fin(item);
-
-      // remove(loggedUser.id);
-      console.log(goalLikes);
+      const index = goalLikes.indexOf(loggedUser.id);
+      remove(index);
       updateGoalLikes(id, goalLikes);
-      console.log('after update');
     }
   };
 
