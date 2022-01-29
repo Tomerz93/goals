@@ -11,7 +11,7 @@
   /* color definitions */
   --white: #fff;
   --red: hsl(0, 61%, 65%);
-  --purple: hsl(263, 78%, 47%);
+  --purple: hsl(263, 82%, 32%);
   --green: hsl(130, 34%, 51%);
   --dark-green: hsl(var(--dark-green-clr));
   --faded-gray: hsl(209, 20%, 33%);
@@ -51,7 +51,7 @@
   --spacing-6: 30px;
   --spacing-6: 35px;
 
-  --btn-padding-vertical: var(--spacing-3);
+  --btn-padding-vertical: var(--spacing-2);
   --btn-padding-horizontal: var(--spacing-2);
 
   --page-spacing: var(--spacing-4);
@@ -217,10 +217,10 @@ $colors: (
 );
 
 @each $size, $value in $spacing {
-  .mb-#{$size} {
+  .mt-#{$size} {
     margin-block-start: $value;
   }
-  .mt-#{$size} {
+  .mb-#{$size} {
     margin-block-end: $value;
   }
   .mr-#{$size} {

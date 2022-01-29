@@ -12,7 +12,6 @@ import {
   where,
   limit,
   CollectionReference,
-  collectionGroup,
   deleteDoc,
   addDoc,
   updateDoc,
@@ -24,7 +23,7 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { COLLECTION_NAMES } from './constants';
-import { CategoryItem } from '@lib/modals';
+import { CategoryItem, User } from '@lib/modals';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_APP_KEY,
@@ -51,7 +50,7 @@ const auth = getAuth(app);
 
 const googleAuthProvider = new GoogleAuthProvider();
 
-const userCollection = collection(db, COLLECTION_NAMES.USERS);
+const userCollection = collection(db, COLLECTION_NAMES.USERS) as CollectionReference<User>
 
 const goalsCollection = collection(
   db,
@@ -112,7 +111,7 @@ const getRefIfExists = async (collectionName: string, ref: string) => {
       return {
         ...document?.data(),
         id: document?.id,
-      };
+      }
     } else {
       return null;
     }
@@ -192,7 +191,7 @@ const getAllGoals = async () => {
     const commentsCount = (await getCommentsCountForGoal(goal.id)) || 0;
     goalsWithUsers.push({ ...goal.data(), id: goal.id, user, commentsCount });
   }
-  console.log(goalsWithUsers);
+
   return goalsWithUsers;
 };
 
@@ -204,7 +203,6 @@ const getGoalWithUserAndComments = async (goalId: string) => {
   const commentsWithUsers = await Promise.all(
     comments.map(async (comment) => {
       const user = await getDocById(COLLECTION_NAMES.USERS, comment.userId);
-      console.log(user);
       return { ...comment, user };
     })
   );
@@ -247,11 +245,10 @@ type userData = {
   uid: string;
 };
 
-const addGoal = (userId: string, goal: Goal) => {
-  const batch = writeBatch(db);
-  // batch.set(doc(userCollection, userId), { email: userData.email, id: userData.uid, username }, { merge: true })
-  batch.set(doc(goalsCollection), goal, { merge: true });
-  batch.commit();
+const addGoal = async (userId: string, goal: Goal) => {
+  console.log(goal);
+  const docRef = await addDoc(goalsCollection, goal);
+  return docRef.id;
 };
 
 const createUser = async (userData: userData, username: string) => {
@@ -292,6 +289,7 @@ export {
   getRefIfExists,
   doc,
   app,
+  addGoal,
   logout,
   getSubCollectionByUser,
   getRef,

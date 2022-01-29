@@ -1,7 +1,6 @@
 import React from 'react';
 import { Avatar, Button, FlexContainer } from '@components/UI';
 import { GoComment } from 'react-icons/go';
-import { FcLike, FcLikePlaceholder } from 'react-icons/fc';
 import { BiUserPlus } from 'react-icons/bi';
 import styles from './GoalCard.module.scss';
 import Link from 'next/link';
@@ -56,7 +55,12 @@ const GoalCard: React.FC<GoalCardProps> = ({
   return (
     <div className={styles.GoalCardContainer}>
       <FlexContainer gap="4">
-        <Avatar src={user?.avatarUrl} round />
+        <Avatar
+          size="s"
+          src={user?.avatarUrl}
+          username={user?.username}
+          round
+        />
         <FlexContainer direction="column">
           <h5>{user?.username}</h5>
           <Button style={{ alignSelf: 'flex-start' }}>
@@ -68,8 +72,8 @@ const GoalCard: React.FC<GoalCardProps> = ({
       <p>{description}</p>
       <FlexContainer alignItems="center" gap="3" justifyContent="end">
         <FlexContainer alignItems="center">
-          <span>{commentsCount}</span>
-          <Link href={`goals/${id}/comments`}>
+          {commentsCount > 0 && <span>{commentsCount}</span>}
+          <Link passHref href={`goals/${id}/comments`}>
             <GoComment />
           </Link>
         </FlexContainer>
@@ -77,7 +81,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
           likes={goalLikes}
           like={like}
           unLike={unLike}
-          userId={loggedUser!.id}
+          userId={loggedUser?.id}
         />
       </FlexContainer>
     </div>
