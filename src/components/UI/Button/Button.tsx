@@ -24,6 +24,7 @@ const Button: React.FC<ButtonProps> = ({
   style = {},
   isSelected,
   variant = 'primary',
+  type = 'button',
 }) => {
   const classes = cx({
     [styles.btn]: true,
@@ -41,7 +42,7 @@ const Button: React.FC<ButtonProps> = ({
       className={classes}
       disabled={disabled}
       onClick={handleOnClick}
-      type="button"
+      type={type}
     >
       {children}
     </button>

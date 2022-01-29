@@ -12,6 +12,7 @@ interface InputProps {
   placeholder?: string;
   register?: UseFormRegister<FieldValues>;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   mode?: 'controlled' | 'uncontrolled';
   rowNum?: 2 | 4 | 6 | 8 | 10 | 12;
   explanation?: string;
@@ -30,6 +31,7 @@ const Input: React.FC<InputProps> = ({
   onChange,
   error = false,
   mode = 'controlled',
+  onBlur,
   register,
   explanation,
   validation,
@@ -64,6 +66,7 @@ const Input: React.FC<InputProps> = ({
           name={name}
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
         />
       );
     }
@@ -77,6 +80,7 @@ const Input: React.FC<InputProps> = ({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
+          onBlur={onBlur}
         />
       );
     }

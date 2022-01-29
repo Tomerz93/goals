@@ -26,7 +26,7 @@ const Header: React.FC<HeaderProps> = ({ openDrawer }) => {
             pathname === GOALS_ROUTES.GOAL_FEED ? styles.activeLink : ''
           }
         >
-          <Link href={GOALS_ROUTES.GOAL_FEED}>
+          <Link passHref href={GOALS_ROUTES.GOAL_FEED}>
             <MdOutlineExplore />
           </Link>
         </div>

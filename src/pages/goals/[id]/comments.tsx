@@ -9,7 +9,8 @@ import {
   editComment,
 } from '@lib/firebase';
 import { useArray } from '@lib/hooks';
-import { useState, useRef } from 'react';
+import { Goal } from '@lib/modals';
+import { useState, useCallback } from 'react';
 
 const Comments: React.FC = ({ initialData }) => {
   const { user: currentUser } = useUserContext();
@@ -21,7 +22,6 @@ const Comments: React.FC = ({ initialData }) => {
     replace,
   } = useArray(initialComments ?? []);
   const [comment, setComment] = useState('');
-  const inputRef = useRef(null);
   const handleOnAddComments = async () => {
     if (!comment) return;
     const newCommentId = await addComment(goal.id, {
@@ -38,12 +38,14 @@ const Comments: React.FC = ({ initialData }) => {
   };
 
   const handleOnEdit = async (commentId: string, content: string) => {
-    console.log(commentId, content);
     const comment = comments.find((comment) => comment.id === commentId);
-    const { userId, id } = comment;
-    await editComment(goal?.id, commentId, { id, userId, content });
+    await editComment(goal?.id, commentId, { id: commentId, content });
     replace(commentId, { ...comment, content });
   };
+
+  const memoizedHandleOnRemoveComment = useCallback(handleOnRemoveComment, []);
+
+  const memoizedHandleOnEditComment = useCallback(handleOnEdit, [comments]);
 
   return (
     <>
@@ -80,8 +82,8 @@ const Comments: React.FC = ({ initialData }) => {
               items={comments}
               otherProps={{
                 currentUserId: currentUser?.id,
-                handleOnEdit,
-                handleOnRemoveComment,
+                handleOnEdit: memoizedHandleOnEditComment,
+                handleOnRemoveComment: memoizedHandleOnRemoveComment,
               }}
             />
           )}
@@ -96,8 +98,7 @@ export async function getServerSideProps(ctx) {
   const { id } = query ?? '';
   try {
     const { user, goal, comments } = await getGoalWithUserAndComments(id);
-    const { estimatedCompletionDate, ...rest } = goal;
-    console.log({ user, goal, comments });
+    const { estimatedCompletionDate, ...rest } = goal as Goal;
     return {
       props: {
         initialData: {
@@ -110,7 +111,6 @@ export async function getServerSideProps(ctx) {
       },
     };
   } catch (error) {
-    console.log(error);
     return {
       props: {
         initialData: {},
