@@ -6,6 +6,8 @@ import { getAllGoals } from '@lib/firebase';
 import GenericList from '@components/UI/GenericList/GenericList';
 import { useAsyncCall } from '@lib/hooks/useAsyncCall';
 import { GoalWithUserSmall } from '@components/Goals/GoalCard/GoalCard';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 const Feed: NextPage = () => {
   const { user } = useUserContext();
@@ -29,5 +31,19 @@ const Feed: NextPage = () => {
     </div>
   );
 };
+
+export async function getServerSideProps(ctx) {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: 1,
+    },
+  });
+  console.log(user);
+  return {
+    props: {
+      user,
+    },
+  };
+}
 
 export default Feed;
