@@ -5,11 +5,12 @@ import { logInWithProvider } from '@lib/firebase';
 import { USER_ROUTES } from '@lib/routes';
 import styles from './Login.module.scss';
 import type { NextPageWithLayout } from '@lib/modals/generic';
+import { getProviders, signIn } from 'next-auth/react';
 
-const Login: NextPageWithLayout = () => {
+const Login: NextPageWithLayout = ({ providers }) => {
   const router = useRouter();
   const handleOnLogin = async () => {
-    await logInWithProvider();
+    await signIn(providers.id);
     router.push(USER_ROUTES.USER_CREATE);
   };
   return (
@@ -30,5 +31,12 @@ const Login: NextPageWithLayout = () => {
   );
 };
 Login.Layout = LayoutWithoutHeader;
+
+export async function getServerSideProps(context) {
+  const providers = await getProviders();
+  return {
+    props: { providers },
+  };
+}
 
 export default Login;

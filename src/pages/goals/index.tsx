@@ -7,15 +7,13 @@ import GenericList from '@components/UI/GenericList/GenericList';
 import { useAsyncCall } from '@lib/hooks/useAsyncCall';
 import { GoalWithUserSmall } from '@components/Goals/GoalCard/GoalCard';
 import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { useSession } from 'next-auth/react';
 
 const Feed: NextPage = () => {
-  const { user } = useUserContext();
-  const { data: goals, isLoading } = useAsyncCall<GoalWithUserSmall[]>(
-    getAllGoals,
-    true
-  );
-  if (isLoading || !goals) return <div>Loading...</div>;
+  const { data } = useSession();
+  console.log(data);
+  const goals = [];
+  // if (isLoading || !goals) return <div>Loading...</div>;
   return (
     <div className={`${styles.feedContainer} mt-5`}>
       <div>
@@ -32,17 +30,12 @@ const Feed: NextPage = () => {
   );
 };
 
-export async function getServerSideProps(ctx) {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: 1,
-    },
-  });
-  console.log(user);
+export async function getServerSideProps(context) {
+  const prisma = new PrismaClient();
+  // const goals = await prisma.goal.findMany();
+  // console.log(goals);
   return {
-    props: {
-      user,
-    },
+    props: {},
   };
 }
 
