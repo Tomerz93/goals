@@ -1,24 +1,32 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react';
-import type { NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { createUser, getDocById } from '@lib/firebase';
 import { useWithAuthContext } from '@lib/context/auth';
 import { GOALS_ROUTES, USER_ROUTES } from '@lib/routes';
 import { Input, Button, LayoutWithoutHeader } from '@components/UI';
-import { useUserContext } from '@lib/context/user';
-
+import { UseCreateUserMutation } from '@lib/hooks/UseCreateUserMutation';
+import { PrismaClient } from '@prisma/client';
+import { getSession } from 'next-auth/react';
 const Spacer: React.FC = () => <div style={{ marginTop: '3rem' }}></div>;
 
 const Spinner = () => <div>Loading...</div>;
 
+const isValidUsername = (username: string) => {
+  return /^[a-zA-Z0-9_]{3,20}$/.test(username);
+};
+
 const UserNameForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [isUserExists, setIsUserExists] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const { user } = useWithAuthContext();
-
   const router = useRouter();
+  const { mutate, isLoading, isError, isSuccess, data, error } =
+    UseCreateUserMutation();
+  useEffect(() => {
+    if (isSuccess) {
+      router.push(GOALS_ROUTES.GOAL_FEED);
+    }
+  }, [isLoading, isSuccess]);
+
   const handleOnChange = (e: SyntheticEvent) => {
     const { value } = e.target as HTMLInputElement;
     setUsername(value);
@@ -28,23 +36,13 @@ const UserNameForm: React.FC = () => {
     e.preventDefault();
 
     if (isValidUsername(username)) return;
-    setLoading(true);
-
-    const exitingUsername = await getDocById('usernames', username);
-
-    if (!exitingUsername) {
-      const { email = '', uid = '' } = user ?? { email: '', uid: '' };
-      await createUser({ email, uid }, username);
-      router.push(GOALS_ROUTES.GOAL_FEED);
-      setLoading(false);
-    } else {
-      setIsUserExists(true);
-      setLoading(false);
-    }
+    // TODO handle checking if user exits or not before creating
+    // const exitingUsername = await getDocById('usernames', username);
+    mutate(username);
   };
 
-  const error = isValidUsername(username);
-  const isDisabled = !username.trim() || isValidUsername(username) || loading;
+  const formError = isValidUsername(username);
+  const isDisabled = !isValidUsername(username) || isLoading;
   return (
     <div>
       <h4>
@@ -56,42 +54,61 @@ const UserNameForm: React.FC = () => {
         to anonymous if you were to so choose from system preferences
       </small>
       <Input
-        error={isValidUsername(username)}
+        error={!isValidUsername(username)}
         name="username"
         type="text"
         value={username}
         onChange={handleOnChange}
       />
-      {error && <p>Username must be at least 2 characters long</p>}
+      {/* {formError && <p>Username must be at least 2 characters long</p>} */}
       {isUserExists && <p>Username already exists</p>}
       <Spacer />
       <Button handleOnClick={handleOnSubmit} disabled={isDisabled}>
-        {loading ? 'Fetching...' : 'Submit'}
+        {isLoading ? 'Fetching...' : 'Submit'}
       </Button>
     </div>
   );
 };
 
-const isValidUsername = (username: string) => {
-  if (!username) return false;
-  return username.length < 2;
-};
-
 const CreateUsername: NextPage = () => {
-  const { user: authUser } = useWithAuthContext();
-  const { user } = useUserContext();
-  const { username = '' } = user ?? { username: '' };
   const router = useRouter();
-
-  useEffect(() => {
-    if (user && user?.categories?.length > 0)
-      router.push(GOALS_ROUTES.GOAL_FEED);
-    if (user && !user?.categories?.length)
-      router.push(USER_ROUTES.USER_CATEGORIES);
-  }, [username, authUser]);
-  return authUser && !username ? <UserNameForm /> : <Spinner />;
+  // useEffect(() => {
+  //   if (user && user?.categories?.length > 0)
+  //     router.push(GOALS_ROUTES.GOAL_FEED);
+  //   if (user && !user?.categories?.length)
+  //     router.push(USER_ROUTES.USER_CATEGORIES);
+  // }, [username, authUser]);
+  return <UserNameForm />;
 };
 
 CreateUsername.Layout = LayoutWithoutHeader;
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const prisma = new PrismaClient();
+  const session = await getSession({ req });
+  await prisma.user.findFirst({
+    where: { id: session?.userId as string },
+    include: { categories: true },
+  });
+
+  // const { user = null } = session ?? {};
+  // if (user && user.username) {
+  //   return {
+  //     redirect: {
+  //       destination: USER_ROUTES.USER_CREATE,
+  //       props: {},
+  //     },
+  //   };
+  // }
+  // return {
+  //   redirect: {
+  //     destination: GOALS_ROUTES.GOAL_FEED,
+  //     props: {},
+  //   },
+  // };
+  return {
+    props: {},
+  };
+};
 
 export default CreateUsername;
