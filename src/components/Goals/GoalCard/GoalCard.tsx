@@ -12,7 +12,7 @@ import { useArray } from '@lib/hooks';
 export interface UserSmall {
   id: string;
   username: string;
-  avatarUrl: string;
+  image: string;
 }
 
 interface Goal {
@@ -31,7 +31,7 @@ interface GoalCardProps {
 }
 
 const GoalCard: React.FC<GoalCardProps> = ({
-  goal: { description, user, commentsCount, id, likes },
+  goal: { description, user, commentsCount, id, likes, image },
 }) => {
   const { user: loggedUser } = useUserContext();
   const { data: goalLikes, set } = useArray(likes ?? []);
@@ -55,12 +55,7 @@ const GoalCard: React.FC<GoalCardProps> = ({
   return (
     <div className={styles.GoalCardContainer}>
       <FlexContainer gap="4">
-        <Avatar
-          size="s"
-          src={user?.avatarUrl}
-          username={user?.username}
-          round
-        />
+        <Avatar size="s" src={user?.image} username={user?.username} round />
         <FlexContainer direction="column">
           <h5>{user?.username}</h5>
           <Button style={{ alignSelf: 'flex-start' }}>
