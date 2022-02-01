@@ -8,12 +8,16 @@ import { useAsyncCall } from '@lib/hooks/useAsyncCall';
 import { GoalWithUserSmall } from '@components/Goals/GoalCard/GoalCard';
 import { PrismaClient } from '@prisma/client';
 import { useSession } from 'next-auth/react';
+import { client } from '../../../lib/client';
+import { useQuery } from 'react-query';
 
 const Feed: NextPage = () => {
-  const { data } = useSession();
-  console.log(data);
-  const goals = [];
-  // if (isLoading || !goals) return <div>Loading...</div>;
+  const { data: sessionData } = useSession();
+  const { data: { goals = null } = {}, isLoading } = useQuery('allGoals', () =>
+    client.allGoals()
+  );
+
+  if (isLoading || !goals) return <div>Loading...</div>;
   return (
     <div className={`${styles.feedContainer} mt-5`}>
       <div>
@@ -29,14 +33,5 @@ const Feed: NextPage = () => {
     </div>
   );
 };
-
-export async function getServerSideProps(context) {
-  const prisma = new PrismaClient();
-  // const goals = await prisma.goal.findMany();
-  // console.log(goals);
-  return {
-    props: {},
-  };
-}
 
 export default Feed;

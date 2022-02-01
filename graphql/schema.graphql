@@ -18,6 +18,10 @@ type Goal {
   user: User
 }
 
+type Mutation {
+  createUsername(username: String!): User!
+}
+
 type Query {
   comments: [Comment]!
   goals: [Goal]!

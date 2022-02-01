@@ -41,8 +41,8 @@ export const GetGoals = extendType({
     definition(t) {
         t.nonNull.list.field('goals', {
             type: 'Goal',
-            resolve(_parent, _args, ctx) {
-                return ctx.prisma.goal.findMany()
+            async resolve(_parent, _args, ctx) {
+                return await ctx.prisma.goal.findMany()
             },
         })
     },

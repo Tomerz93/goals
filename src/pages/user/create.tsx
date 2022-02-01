@@ -1,12 +1,13 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react';
 import type { GetServerSideProps, NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useWithAuthContext } from '@lib/context/auth';
 import { GOALS_ROUTES, USER_ROUTES } from '@lib/routes';
 import { Input, Button, LayoutWithoutHeader } from '@components/UI';
-import { UseCreateUserMutation } from '@lib/hooks/UseCreateUserMutation';
 import { PrismaClient } from '@prisma/client';
 import { getSession } from 'next-auth/react';
+import { client } from '../../../lib/client';
+import { useMutation } from 'react-query';
+
 const Spacer: React.FC = () => <div style={{ marginTop: '3rem' }}></div>;
 
 const Spinner = () => <div>Loading...</div>;
@@ -19,8 +20,9 @@ const UserNameForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [isUserExists, setIsUserExists] = useState(false);
   const router = useRouter();
-  const { mutate, isLoading, isError, isSuccess, data, error } =
-    UseCreateUserMutation();
+  const { mutate, isLoading, isError, isSuccess, data, error } = useMutation(
+    (username: string) => client.createUsername({ username })
+  );
   useEffect(() => {
     if (isSuccess) {
       router.push(GOALS_ROUTES.GOAL_FEED);
@@ -35,7 +37,7 @@ const UserNameForm: React.FC = () => {
   const handleOnSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
 
-    if (isValidUsername(username)) return;
+    // if (isValidUsername(username)) return;
     // TODO handle checking if user exits or not before creating
     // const exitingUsername = await getDocById('usernames', username);
     mutate(username);
