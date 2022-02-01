@@ -1,16 +1,21 @@
+import type { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { BsGoogle } from 'react-icons/bs';
 import { Button, LayoutWithoutHeader } from '@components/UI';
-import { logInWithProvider } from '@lib/firebase';
-import { USER_ROUTES } from '@lib/routes';
+
+import { GOALS_ROUTES, USER_ROUTES } from '@lib/routes';
 import styles from './Login.module.scss';
 import type { NextPageWithLayout } from '@lib/modals/generic';
-import { getProviders, signIn } from 'next-auth/react';
+import { getProviders, signIn, getSession } from 'next-auth/react';
 
 const Login: NextPageWithLayout = ({ providers }) => {
   const router = useRouter();
   const handleOnLogin = async () => {
-    await signIn(providers.id);
+    try {
+      await signIn(providers.id);
+    } catch (error) {
+      console.log(error);
+    }
     router.push(USER_ROUTES.USER_CREATE);
   };
   return (
@@ -32,11 +37,29 @@ const Login: NextPageWithLayout = ({ providers }) => {
 };
 Login.Layout = LayoutWithoutHeader;
 
-export async function getServerSideProps(context) {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const providers = await getProviders();
+  const session = await getSession({ req });
+  const { user = null } = session ?? {};
+  if (!user) {
+    return {
+      props: { providers },
+    };
+  }
+  if (user && !user.username) {
+    return {
+      redirect: {
+        destination: USER_ROUTES.USER_CREATE,
+        props: {},
+      },
+    };
+  }
   return {
-    props: { providers },
+    redirect: {
+      destination: GOALS_ROUTES.GOAL_FEED,
+      props: {},
+    },
   };
-}
+};
 
 export default Login;

@@ -8,59 +8,55 @@ datasource db {
 }
 
 model Like {
-  id        String @id @default(cuid())
+  id        String   @id @default(cuid())
   goalId    String
   userId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  goal Goal @relation(fields: [goalId],references: [id])
-  user User @relation(fields: [userId],references: [id])
+  goal      Goal     @relation(fields: [goalId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Comment {
-  id          String @id @default(cuid())
-  userId      String
-  goalId      String
-  content     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  goal        Goal   @relation(fields: [goalId], references: [id])
-  user        User   @relation(fields: [userId], references: [id])
+  id        String   @id @default(cuid())
+  userId    String
+  goalId    String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  goal      Goal     @relation(fields: [goalId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
 
 model Category {
-  id    String  @id @default(cuid())
+  id    String              @id @default(cuid())
   title String
-  value String 
-  users  CategoriesOnUsers[]
+  value String
+  users CategoriesOnUsers[]
 }
 
 model Step {
-  id          String @id @default(cuid())
-  isCompleted Boolean @default(false)
-  title       String 
+  id          String   @id @default(cuid())
+  isCompleted Boolean  @default(false)
+  title       String
   description String
   goalId      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  goal        Goal @relation(fields: [goalId], references: [id])
-
+  goal        Goal     @relation(fields: [goalId], references: [id])
 }
 
 model Goal {
-  id          String     @id @default(cuid())
-  title       String     @db.VarChar(255)
-  description String     @db.Text
-  userId      String   
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  comments  Comment[]
-  likes     Like[]
-  steps     Step[]
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id          String    @id @default(cuid())
+  userId      String
+  createdAt   DateTime  @default(now())
+  title       String    @db.VarChar(255)
+  updatedAt   DateTime  @updatedAt
+  description String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments    Comment[]
+  likes       Like[]
+  steps       Step[]
 }
 
 model Account {
@@ -69,17 +65,16 @@ model Account {
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
+  refresh_token      String?
+  access_token       String?
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?  @db.Text
+  id_token           String?
   session_state      String?
   oauth_token_secret String?
   oauth_token        String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -93,34 +88,35 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String              @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?             @unique
   emailVerified DateTime?
   image         String?
-  username      String?   @unique
+  username      String?             @unique
   accounts      Account[]
-  sessions      Session[]
-  goals         Goal[]
-  comments      Comment[]
-  likes         Like[]
   categories    CategoriesOnUsers[]
+  comments      Comment[]
+  goals         Goal[]
+  likes         Like[]
+  sessions      Session[]
 }
 
 model CategoriesOnUsers {
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String // relation scalar field (used in the `@relation` attribute above)
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String // relation scalar field (used in the `@relation` attribute above)
+  userId     String
+  categoryId String
   assignedAt DateTime @default(now())
   assignedBy String
+  category   Category @relation(fields: [categoryId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+
   @@id([userId, categoryId])
 }
-
 
 model VerificationToken {
   identifier String
   token      String   @unique
   expires    DateTime
+
   @@unique([identifier, token])
 }
