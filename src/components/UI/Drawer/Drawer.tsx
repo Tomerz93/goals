@@ -1,10 +1,10 @@
 import React from 'react';
 import cx from 'classnames';
-import { useUserContext } from '@lib/context/user';
 import { Avatar, NavigationLinks, ThemeToggler } from '@components/UI';
 import FlexContainer from '../FlexContainer/FlexContainer';
 import styles from './Drawer.module.scss';
 import BackDrop from '../Backdrop/Backdrop';
+import { useSession } from 'next-auth/react';
 
 interface AvatarUserCardProps {
   username: string;
@@ -35,7 +35,9 @@ interface DrawerProps {
 }
 
 const Drawer: React.FC<DrawerProps> = ({ isVisible, toggle }) => {
-  const { user } = useUserContext();
+  const { data } = useSession();
+  console.log(data);
+  const { user = null } = data ?? {};
   if (!user) return null;
 
   const drawerClasses = cx({
@@ -43,6 +45,7 @@ const Drawer: React.FC<DrawerProps> = ({ isVisible, toggle }) => {
     [styles.visible]: isVisible,
   });
   const toggleDrawer = () => (isVisible ? toggle() : null);
+  console.log(isVisible);
   return (
     <>
       {isVisible && <BackDrop closeDrawer={toggle} />}

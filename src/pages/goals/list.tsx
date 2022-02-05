@@ -2,7 +2,6 @@ import { useUserContext } from '@lib/context/user';
 import type { NextPage } from 'next';
 import styles from './index.module.scss';
 import React, { useState, useEffect } from 'react';
-import { getGoalsByUser } from '@lib/firebase';
 import {
   Tabs,
   TabList,

@@ -49,6 +49,7 @@ model Step {
 model Goal {
   id          String    @id @default(cuid())
   userId      String
+  isCompleted Boolean   @default(false)
   createdAt   DateTime  @default(now())
   title       String    @db.VarChar(255)
   updatedAt   DateTime  @updatedAt

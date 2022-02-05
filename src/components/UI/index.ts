@@ -11,6 +11,7 @@ export { default as ThemeToggler } from './ThemeToggler/ThemeToggler'
 export { default as Drawer } from './Drawer/Drawer'
 export { default as Backdrop } from './Backdrop/Backdrop'
 export { default as Comment } from './Comment/Comment'
+export { default as GenericList } from './GenericList/GenericList'
 
 export { default as Badge } from './Badge/Badge'
 export { default as Modal } from './Modal/Modal'

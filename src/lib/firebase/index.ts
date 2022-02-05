@@ -266,7 +266,7 @@ const createUser = async (userData: userData, username: string) => {
   try {
     await batch.commit();
   } catch (error) {
-    console.log(error);
+    (error);console.log
   }
 };
 
