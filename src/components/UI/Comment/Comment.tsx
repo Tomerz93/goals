@@ -166,7 +166,7 @@ const Comment: React.FC<CommentProps> = ({
         <FlexContainer>
           <Avatar
             round
-            src={comment.user.avatarUrl}
+            src={comment.user.image}
             username={comment.user.username}
           />
           <div>

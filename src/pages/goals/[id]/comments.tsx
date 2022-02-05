@@ -1,47 +1,105 @@
+import { useState, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import type { GetServerSideProps } from 'next';
+import { dehydrate, QueryClient, useQuery, useMutation } from 'react-query';
 import { GoalCard } from '@components/Goals';
-import { Button, Input, Comment } from '@components/UI';
-import GenericList from '@components/UI/GenericList/GenericList';
-import { useUserContext } from '@lib/context/user';
-import {
-  getGoalWithUserAndComments,
-  addComment,
-  removeComment,
-  editComment,
-} from '@lib/firebase';
+import { Button, Input, GenericList, Comment } from '@components/UI';
 import { useArray } from '@lib/hooks';
-import { Goal } from '@lib/modals';
-import { useState, useCallback } from 'react';
+import { client } from '../../../../lib/client';
+import { useSession } from 'next-auth/react';
 
-const Comments: React.FC = ({ initialData }) => {
-  const { user: currentUser } = useUserContext();
-  const { goal, comments: initialComments, user } = initialData ?? {};
+const Comments: React.FC = (props) => {
+  const { data } = useSession();
+  const router = useRouter();
+  const { id } = router.query;
+
+  const { username = '', user, userId } = data ?? {};
+
+  const { mutate: addComment } = useMutation(
+    ({
+      content,
+      userId,
+      goalId,
+    }: {
+      content: string;
+      userId: string;
+      goalId: string;
+    }) => client.addComment({ goalId, userId, content }),
+    {
+      onSuccess: ({ addComment: { content, id } }) => {
+        setComment('');
+        const comment = {
+          content,
+          id,
+          user: {
+            ...user,
+            username: username,
+          },
+        };
+        push(comment);
+      },
+    }
+  );
+  const { mutate: removeComment } = useMutation(
+    ({ id }: { id: string }) => client.removeComment({ id }),
+    {
+      onSuccess: ({ removeComment: { id } }) => {
+        removeById(id);
+      },
+    }
+  );
+  const { mutate: updateComment } = useMutation(
+    ({ id, content }: { id: string; content: string }) =>
+      client.updateComment({
+        id,
+        content,
+      }),
+    {
+      onSuccess: ({ updateComment: { id, content } }) =>
+        replace(id, {
+          content,
+          id,
+          user: {
+            ...user,
+            username,
+          },
+        }),
+    }
+  );
+  const { data: { goal } = {} } = useQuery('initialComments', () =>
+    client.getGoal({ id })
+  );
+
   const {
     data: comments,
     push,
     removeById,
     replace,
-  } = useArray(initialComments ?? []);
+    set,
+  } = useArray(goal?.comments ?? []);
+  useEffect(() => {
+    if (goal) {
+      set(goal.comments);
+    }
+  }, [goal]);
   const [comment, setComment] = useState('');
+  const { user: goalOwner } = goal ?? {};
   const handleOnAddComments = async () => {
     if (!comment) return;
-    const newCommentId = await addComment(goal.id, {
+    if (!goal?.id) return;
+    addComment({
+      goalId: goal.id,
+      userId,
       content: comment,
-      userId: currentUser?.id,
     });
-    push({ content: comment, user: currentUser, id: newCommentId });
     setComment('');
   };
 
-  const handleOnRemoveComment = async (commentId: string) => {
-    await removeComment(goal?.id, commentId);
-    removeById(commentId);
-  };
+  const handleOnRemoveComment = (commentId: string) =>
+    removeComment({ id: commentId });
 
-  const handleOnEdit = async (commentId: string, content: string) => {
-    const comment = comments.find((comment) => comment.id === commentId);
-    await editComment(goal?.id, commentId, { id: commentId, content });
-    replace(commentId, { ...comment, content });
-  };
+  const handleOnEdit = (commentId: string, content: string) =>
+    updateComment({ id: commentId, content });
 
   const memoizedHandleOnRemoveComment = useCallback(handleOnRemoveComment, []);
 
@@ -49,12 +107,12 @@ const Comments: React.FC = ({ initialData }) => {
 
   return (
     <>
-      {initialData && (
+      {goal && (
         <div>
           <GoalCard
             goal={{
               ...goal,
-              user,
+              user: goalOwner,
               commentsCount: comments?.length > 0 ? comments.length : 0,
             }}
           />
@@ -75,13 +133,13 @@ const Comments: React.FC = ({ initialData }) => {
           >
             Submit
           </Button>
-          {comments?.length > 0 && (
+          {comments.length > 0 && (
             <GenericList
               component={Comment}
               resourceName="comment"
               items={comments}
               otherProps={{
-                currentUserId: currentUser?.id,
+                currentUserId: userId,
                 handleOnEdit: memoizedHandleOnEditComment,
                 handleOnRemoveComment: memoizedHandleOnRemoveComment,
               }}
@@ -93,21 +151,16 @@ const Comments: React.FC = ({ initialData }) => {
   );
 };
 
-export async function getServerSideProps(ctx) {
-  const { query } = ctx;
-  const { id } = query ?? '';
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const queryClient = new QueryClient();
+  const { id = '' } = query ?? {};
   try {
-    const { user, goal, comments } = await getGoalWithUserAndComments(id);
-    const { estimatedCompletionDate, ...rest } = goal as Goal;
+    await queryClient.prefetchQuery('initialComments', () =>
+      client.getGoal({ id })
+    );
     return {
       props: {
-        initialData: {
-          goal: {
-            ...rest,
-          },
-          user,
-          comments,
-        },
+        initialData: dehydrate(queryClient),
       },
     };
   } catch (error) {
@@ -117,6 +170,6 @@ export async function getServerSideProps(ctx) {
       },
     };
   }
-}
+};
 
 export default Comments;

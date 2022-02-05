@@ -1,4 +1,4 @@
-import { objectType, extendType } from 'nexus'
+import { objectType, extendType, nonNull, stringArg } from 'nexus'
 import { User } from './User'
 import { Comment } from './Comment'
 
@@ -42,8 +42,27 @@ export const GetGoals = extendType({
         t.nonNull.list.field('goals', {
             type: 'Goal',
             async resolve(_parent, _args, ctx) {
-                return await ctx.prisma.goal.findMany()
+                return (await ctx.prisma.goal.findMany())
             },
         })
     },
+})
+
+export const GetGoal = extendType({
+    type: 'Query',
+    definition(t) {
+        t.field('goal', {
+            type: 'Goal',
+            args: {
+                id: nonNull(stringArg()),
+            },
+            async resolve(_parent, { id }, ctx) {
+                return await ctx.prisma.goal.findUnique({
+                    where: {
+                        id,
+                    },
+                })
+            }
+        })
+    }
 })

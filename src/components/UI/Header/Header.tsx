@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import styles from './Header.module.scss';
-import cx from 'classnames';
 import { MdOutlineExplore, MdOutlineAdd } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
 import Link from 'next/link';
@@ -19,7 +18,11 @@ const Header: React.FC<HeaderProps> = ({ openDrawer }) => {
       <span>Logo</span>
       <FlexContainer alignItems="center" justifyContent="center">
         <div>
-          <CgProfile onClick={() => openDrawer()} />
+          <CgProfile
+            onClick={() => {
+              openDrawer();
+            }}
+          />
         </div>
         <div
           className={

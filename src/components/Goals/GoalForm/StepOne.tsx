@@ -7,7 +7,7 @@ import { useArray } from '@lib/hooks';
 import styles from './StepOne.module.scss';
 import { StepNavigator } from '.';
 import { useFormContext } from '@lib/context/form';
-import { CATEGORIES } from 'data/categories';
+import { CATEGORIES } from '@data/categories';
 import { getIsMinLength } from 'utils';
 
 interface StepOneProps {

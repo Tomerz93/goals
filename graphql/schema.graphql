@@ -5,8 +5,10 @@
 type Comment {
   content: String
   goal: Goal
+  goalId: String
   id: String
   user: User
+  userId: String
 }
 
 type Goal {
@@ -19,11 +21,15 @@ type Goal {
 }
 
 type Mutation {
+  addComment(content: String!, goalId: String!, userId: String!): Comment!
   createUsername(username: String!): User!
+  removeComment(id: String!): Comment
+  updateComment(content: String!, id: String!): Comment
 }
 
 type Query {
   comments: [Comment]!
+  goal(id: String!): Goal
   goals: [Goal]!
   users: [User]!
 }

@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export default NextAuth({
   adapter: PrismaAdapter(prisma),
   pages: {
-    signIn: '/login',
+    // signIn: '/login',
   },
   providers: [
     GoogleProvider({
@@ -17,6 +17,7 @@ export default NextAuth({
   ],
   callbacks: {
     session: async ({ session, user }) => {
+      session.username = user.username;
       session.userId = user.id;
       return Promise.resolve(session);
     },

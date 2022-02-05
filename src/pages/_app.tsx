@@ -1,3 +1,4 @@
+import React from 'react';
 import '../styles/globals.scss';
 import '../styles/index.scss';
 import type { AppProps } from 'next/app';
@@ -7,16 +8,9 @@ import { Layout } from '@components/UI';
 import AuthCheck from '@components/AuthCheck/AuthCheck';
 import { UserProvider } from '@lib/context/user';
 import { SessionProvider } from 'next-auth/react';
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-  QueryClient,
-  QueryClientProvider,
-} from 'react-query';
+import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
 const Noop: React.FC = ({ children }) => <>{children}</>;
-const queryClient = new QueryClient();
 
 const MyApp = ({
   Component,
@@ -24,22 +18,26 @@ const MyApp = ({
 }: AppProps) => {
   const AppLayout = (Component as any).Layout || Layout;
   const Provider = (Component as any).Provider ?? Noop;
+  const [queryClient] = React.useState(() => new QueryClient());
+
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <AuthProvider>
-            <UserProvider>
-              <AppLayout>
-                <Provider>
-                  {/* <AuthCheck> */}
-                  <Component {...pageProps} />
-                  {/* </AuthCheck> */}
-                </Provider>
-              </AppLayout>
-            </UserProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <Hydrate state={pageProps.dehydratedState}>
+          <ThemeProvider>
+            <AuthProvider>
+              <UserProvider>
+                <AppLayout>
+                  <Provider>
+                    <AuthCheck>
+                    <Component {...pageProps} />
+                    </AuthCheck>
+                  </Provider>
+                </AppLayout>
+              </UserProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </Hydrate>
       </QueryClientProvider>
     </SessionProvider>
   );

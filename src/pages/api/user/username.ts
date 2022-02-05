@@ -12,7 +12,7 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<Data>
 ) {
-    console.log('called');
+
     const { username = '' } = req.body
     const { userId } = await getSession({ req })
     try {

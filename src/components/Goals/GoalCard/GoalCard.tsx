@@ -31,7 +31,7 @@ interface GoalCardProps {
 }
 
 const GoalCard: React.FC<GoalCardProps> = ({
-  goal: { description, user, commentsCount, id, likes, image },
+  goal: { description, user, commentsCount, id, likes },
 }) => {
   const { user: loggedUser } = useUserContext();
   const { data: goalLikes, set } = useArray(likes ?? []);
