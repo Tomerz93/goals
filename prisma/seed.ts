@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { goals, users, comments } from './seeds';
+import { goals, users, comments, CATEGORIES } from './seeds';
 
 const prisma = new PrismaClient();
 const seedDB = async () => {
@@ -27,6 +27,15 @@ const seedDB = async () => {
                 where: { id: comment.id },
                 update: {},
                 create: comment,
+            })
+        )
+    );
+    await Promise.all(
+        CATEGORIES.map(async (category) =>
+            prisma.category.upsert({
+                where: { id: category.id },
+                update: {},
+                create: category,
             })
         )
     );

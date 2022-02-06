@@ -11,7 +11,6 @@ import { SessionProvider } from 'next-auth/react';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
 const Noop: React.FC = ({ children }) => <>{children}</>;
-
 const MyApp = ({
   Component,
   pageProps: { session, ...pageProps },
@@ -29,9 +28,13 @@ const MyApp = ({
               <UserProvider>
                 <AppLayout>
                   <Provider>
-                    <AuthCheck>
-                    <Component {...pageProps} />
-                    </AuthCheck>
+                    {Component.isProtected ? (
+                      <AuthCheck>
+                        <Component {...pageProps} />
+                      </AuthCheck>
+                    ) : (
+                      <Component {...pageProps} />
+                    )}
                   </Provider>
                 </AppLayout>
               </UserProvider>

@@ -2,6 +2,15 @@
 ### Do not make changes to this file directly
 
 
+type Category {
+  goal: Goal
+  goalId: String
+  id: String
+  title: String
+  user: User
+  value: String
+}
+
 type Comment {
   content: String
   goal: Goal
@@ -12,16 +21,18 @@ type Comment {
 }
 
 type Goal {
-  category: String
+  categories: [Category]
   comments: [Comment]
   description: String
   id: String
+  isCompleted: Boolean
   title: String
   user: User
 }
 
 type Mutation {
   addComment(content: String!, goalId: String!, userId: String!): Comment!
+  createGoal(category: String!, description: String!, title: String!): Goal
   createUsername(username: String!): User!
   removeComment(id: String!): Comment
   updateComment(content: String!, id: String!): Comment

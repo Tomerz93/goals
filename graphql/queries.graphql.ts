@@ -15,6 +15,16 @@ export const AllUsersQuery = gql`
     }
   }
 `;
+export const getGoalList = gql`
+  query goalList {
+    goals {
+      id
+      title
+      description
+      isCompleted
+    }
+  }
+`;
 export const getGoal = gql`
   query getGoal($id: String!) {
   goal(id: $id) {

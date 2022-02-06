@@ -84,6 +84,7 @@ const CreateUsername: NextPage = () => {
 };
 
 CreateUsername.Layout = LayoutWithoutHeader;
+CreateUsername.isProtected = true;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const prisma = new PrismaClient();

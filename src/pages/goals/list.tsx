@@ -1,4 +1,3 @@
-import { useUserContext } from '@lib/context/user';
 import type { NextPage } from 'next';
 import styles from './index.module.scss';
 import React, { useState, useEffect } from 'react';
@@ -11,7 +10,8 @@ import {
 } from '@components/UI';
 import GenericList from '@components/UI/GenericList/GenericList';
 import GoalListCard from '@components/Goals/GoalListCard/GoalListCard';
-import { useQuery } from '@lib/hooks/useQuery';
+import { client } from '../../../lib/client';
+import { useQuery } from 'react-query';
 
 interface Goal {
   completed: boolean;
@@ -47,19 +47,19 @@ const GoalList: React.FC<{ goals: Goal[] }> = ({ goals }) => (
 );
 
 const Feed: NextPage = () => {
-  const { user } = useUserContext();
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [goals, setGoals] = useState<{ inProgress: []; completed: [] }>({
     inProgress: [],
     completed: [],
   });
   const { inProgress, completed } = goals;
-  const id = user?.id ?? '';
-  const { isLoading, document } = useQuery<Goal>('goals', id);
-
-  useEffect(() => {
-    if (document) setGoals(sortGoals(document));
-  }, [document]);
+  const { data, status } = useQuery('goalList', () => client.goalList(), {
+    onSuccess: (data) => {
+      const { goals } = data;
+      console.log(goals);
+      setGoals(sortGoals(goals));
+    },
+  });
 
   return (
     <div className={styles.feedContainer}>

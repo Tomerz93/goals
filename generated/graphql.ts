@@ -31,6 +31,7 @@ export type Goal = {
   comments?: Maybe<Array<Maybe<Comment>>>;
   description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
+  isCompleted?: Maybe<Scalars['Boolean']>;
   title?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
 };
@@ -125,6 +126,11 @@ export type AllGoalsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type AllGoalsQuery = { __typename?: 'Query', goals: Array<{ __typename?: 'Goal', id?: string | null | undefined, title?: string | null | undefined, description?: string | null | undefined, user?: { __typename?: 'User', username?: string | null | undefined, image?: string | null | undefined } | null | undefined, comments?: Array<{ __typename?: 'Comment', id?: string | null | undefined } | null | undefined> | null | undefined } | null | undefined> };
 
+export type GoalListQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GoalListQuery = { __typename?: 'Query', goals: Array<{ __typename?: 'Goal', id?: string | null | undefined, title?: string | null | undefined, description?: string | null | undefined, isCompleted?: boolean | null | undefined } | null | undefined> };
+
 export type GetGoalQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -180,6 +186,16 @@ export const AllGoalsDocument = gql`
   }
 }
     `;
+export const GoalListDocument = gql`
+    query goalList {
+  goals {
+    id
+    title
+    description
+    isCompleted
+  }
+}
+    `;
 export const GetGoalDocument = gql`
     query getGoal($id: String!) {
   goal(id: $id) {
@@ -224,6 +240,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     allGoals(variables?: AllGoalsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<AllGoalsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<AllGoalsQuery>(AllGoalsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'allGoals');
+    },
+    goalList(variables?: GoalListQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GoalListQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GoalListQuery>(GoalListDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'goalList');
     },
     getGoal(variables: GetGoalQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetGoalQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetGoalQuery>(GetGoalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getGoal');

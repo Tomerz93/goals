@@ -32,7 +32,8 @@ model Category {
   id    String              @id @default(cuid())
   title String
   value String
-  users CategoriesOnUsers[]
+  users User[]
+  goals Goal[]
 }
 
 model Step {
@@ -56,6 +57,7 @@ model Goal {
   description String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments    Comment[]
+  categories Category[]
   likes       Like[]
   steps       Step[]
 }
@@ -96,23 +98,14 @@ model User {
   image         String?
   username      String?             @unique
   accounts      Account[]
-  categories    CategoriesOnUsers[]
+  categories    Category[]
   comments      Comment[]
   goals         Goal[]
   likes         Like[]
   sessions      Session[]
 }
 
-model CategoriesOnUsers {
-  userId     String
-  categoryId String
-  assignedAt DateTime @default(now())
-  assignedBy String
-  category   Category @relation(fields: [categoryId], references: [id])
-  user       User     @relation(fields: [userId], references: [id])
 
-  @@id([userId, categoryId])
-}
 
 model VerificationToken {
   identifier String
