@@ -3,8 +3,10 @@ import type { NextPage } from 'next';
 import type { Goal } from '@lib/modals';
 import { StepOne, StepTwo } from '@components/Goals/GoalForm';
 import { FormProvider, useFormContext } from '@lib/context/form';
-import { addGoal, getGoalById } from '@lib/firebase';
-import { useUserContext } from '@lib/context/user';
+import { client } from '@lib/client';
+import { formatDate } from '@utils/date';
+import format from 'date-fns/format';
+import { useMutation } from 'react-query';
 
 interface CreateGoalProps {
   formData: {
@@ -17,26 +19,54 @@ const CreateGoal: NextPage<CreateGoalProps> = ({
   formData: defaultFormData,
 }) => {
   const { currentStep, formData } = useFormContext();
-  const { user } = useUserContext();
   const { stepOneData, stepTwoData } = defaultFormData ?? {};
   const handleOnSubmit = async (
     lastStepData: { title: { value: string }; description: { value: string } }[]
   ) => {
+    const steps = lastStepData.map(({ title, description }) => ({
+      title: title.value,
+      description: description.value,
+      isCompleted: false,
+    }));
+    const { completion_date } = formData[0];
     const goal = {
-      userId: user!.id,
       ...formData[0],
-      estimatedCompletionDate: '',
-      steps: lastStepData.map(({ title, description }) => ({
-        title: title.value,
-        description: description.value,
-        completed: false,
-      })),
+      estimatedCompletionDate: new Date(completion_date),
+      steps,
     };
-    await addGoal(user!.id, goal);
+    addGoal({
+      ...goal,
+    });
   };
+  const { mutate: addGoal } = useMutation(
+    ({
+      title,
+      description,
+      steps,
+      estimatedCompletionDate,
+    }: {
+      title: string;
+      description: string;
+      steps: any;
+      estimatedCompletionDate: string;
+    }) =>
+      client.createGoal({ title, description, steps, estimatedCompletionDate })
+  );
+
   const STEP_TEXTS = ['Create Goal', 'Add Steps'];
+  console.log(stepOneData);
   const STEPS = [
-    <StepOne defaultValues={stepOneData} />,
+    <StepOne
+      defaultValues={
+        stepOneData
+        // estimatedCompletionDate: stepOneData
+        //   ? format(
+        //       new Date(+stepOneData?.estimatedCompletionDate),
+        //       'yyyy-MM-dd'
+        //     )
+        //   : '',
+      }
+    />,
     <StepTwo defaultValues={stepTwoData} handleOnSubmit={handleOnSubmit} />,
   ];
   return (
@@ -54,38 +84,29 @@ export default CreateGoal;
 export async function getServerSideProps(ctx) {
   const { query } = ctx;
   const { id } = query ?? '';
-  try {
-    const goal = (await getGoalById(id)) as Goal;
-    const { title, categories, estimatedCompletionDate, description, steps } =
-      goal;
-    if (!goal) {
-      return {
-        props: {
-          formData: null,
-        },
-      };
-    }
-    const stepsData = steps.map(({ description, title }) => ({
-      description: { value: description },
-      title: { value: title },
-    }));
+  if (!id) return { props: { formData: null } };
+  const data = await client.getGoal({ id });
+  const { goal } = data ?? {};
+  if (!goal?.id) {
     return {
       props: {
-        formData: {
-          stepOneData: {
-            title,
-            categories,
-            description,
-          },
-          stepTwoData: stepsData,
-        },
-      },
-    };
-  } catch (error) {
-    return {
-      props: {
-        initialData: {},
+        formData: {},
       },
     };
   }
+  const { title, description, steps, categories, estimatedCompletionDate } =
+    goal;
+  return {
+    props: {
+      formData: {
+        stepOneData: {
+          title,
+          estimatedCompletionDate,
+          categories,
+          description,
+        },
+        stepTwoData: steps,
+      },
+    },
+  };
 }

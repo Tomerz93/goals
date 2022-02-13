@@ -8,7 +8,8 @@ import styles from './StepOne.module.scss';
 import { StepNavigator } from '.';
 import { useFormContext } from '@lib/context/form';
 import { CATEGORIES } from '@data/categories';
-import { getIsMinLength } from 'utils';
+import { getIsMinLength } from '@utils/index';
+import { fromUnixTime, format } from 'date-fns';
 
 interface StepOneProps {
   defaultValues?: Partial<Goal>;
@@ -35,11 +36,14 @@ const StepOne: React.FC<StepOneProps> = ({ defaultValues }) => {
   const { onNextStep: goToNextStep, currentStepData } = useFormContext();
   useEffect(() => {
     if (currentStepData || defaultValues) {
+      console.log('here');
       const { title, description, categories, estimatedCompletionDate } =
         currentStepData || defaultValues;
-      setValue('title', title);
-      setValue('completion_date', estimatedCompletionDate?.toDate());
-      setValue('description', description);
+      setValue('title', title, { shouldValidate: true });
+      setValue('completion_date', estimatedCompletionDate, {
+        shouldValidate: true,
+      });
+      setValue('description', description, { shouldValidate: true });
       setCategories(categories);
     }
   }, [currentStepData]);

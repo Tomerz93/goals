@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 export const AllUsersQuery = gql`
-  query allGoals {
-    goals {
+  query getAllGoals {
+    allGoals {
       id
       title
       description
@@ -30,8 +30,10 @@ export const getGoal = gql`
   goal(id: $id) {
     title
     id
+    estimatedCompletionDate
     description
     user{
+      id
       username
       image
     }
@@ -44,6 +46,41 @@ export const getGoal = gql`
         image
       }
     }
+    steps{
+      isCompleted
+      title
+      description
+    }
+    categories{
+      title
+      value
+    }
   }
 }
 `
+
+export const getUser = gql` 
+query getUser($username: String!) {
+  user(username: $username) {
+    id
+    username
+    image
+    goals {
+      id
+      title
+      description
+      isCompleted
+    }
+  }
+}
+`
+// export const getCategories = gql`
+// query getCategories {
+//  categories
+//  {
+//     title
+//     category
+//     value
+//   }
+// }
+// `

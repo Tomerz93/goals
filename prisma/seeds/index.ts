@@ -1,4 +1,5 @@
-export * from './cateogires'
+export * from './categories'
 export * from './comments'
 export * from './goals'
 export * from './users'
+export * from './steps'

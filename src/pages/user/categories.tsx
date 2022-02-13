@@ -8,74 +8,14 @@ import {
   LayoutWithoutHeader,
   FlexContainer,
 } from '@components/UI';
-import { addTag } from '@lib/firebase';
-import { useUserContext } from '@lib/context/user';
 import { GOALS_ROUTES } from '@lib/routes';
 import { useAsyncCall } from '@lib/hooks/useAsyncCall';
 import { NextPageWithLayout } from '@lib/modals/generic';
+import { client } from '@lib/client';
 
-const LIFE_STYLE_ITEMS = [
-  {
-    id: '1',
-    title: 'Lifestyle',
-    value: 'lifestyle',
-  },
-  {
-    id: '2',
-    title: 'Health',
-    value: 'health',
-  },
-  {
-    id: '3',
-    title: 'Fitness',
-    value: 'fitness',
-  },
-  {
-    id: '4',
-    title: 'Relationship',
-    value: 'relationship',
-  },
-  {
-    id: '5',
-    title: 'Career',
-    value: 'career',
-  },
-  {
-    id: '6',
-    title: 'Money',
-    value: 'money',
-  },
-];
-const DEVELOPMENT_ITEMS = [
-  {
-    id: 'a',
-    title: 'Development',
-    value: 'development',
-  },
-  {
-    id: 'b',
-    title: 'Design',
-    value: 'design',
-  },
-  {
-    id: 'c',
-    title: 'Business',
-    value: 'business',
-  },
-  {
-    id: 'd',
-    title: 'Javascript',
-    value: 'javascript',
-  },
-  {
-    id: 'e',
-    title: 'React',
-    value: 'react',
-  },
-];
 const CATEGORY_MAP = {
-  lifestyle: LIFE_STYLE_ITEMS,
-  development: DEVELOPMENT_ITEMS,
+  lifestyle: [],
+  development: [],
 };
 
 interface CategoryMap {
@@ -86,8 +26,12 @@ type SelectedCategories = CategoryMap;
 
 const SelectCategories: NextPageWithLayout = () => {
   const { data, set, push, remove, exists } = useArray<CategoryItem>([]);
-  const { user, isLoading, error: userError } = useUserContext();
-  const { call, error, isSuccess } = useAsyncCall(addTag);
+  const {
+    user,
+    isLoading,
+    error: userError,
+  } = { user: null, isLoading: false, error: null };
+  const { call, error, isSuccess } = useAsyncCall(() => {});
   const router = useRouter();
   const navigateToFeed = () => router.push(GOALS_ROUTES.GOAL_FEED);
 
@@ -143,3 +87,21 @@ const SelectCategories: NextPageWithLayout = () => {
 SelectCategories.Layout = LayoutWithoutHeader;
 
 export default SelectCategories;
+
+export async function getServerSideProps(ctx) {
+  try {
+    const data = await Promise.resolve();
+
+    return {
+      props: {
+        categories: [],
+      },
+    };
+  } catch (error) {
+    return {
+      props: {
+        categories: [],
+      },
+    };
+  }
+}

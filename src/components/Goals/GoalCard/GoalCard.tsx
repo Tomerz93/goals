@@ -4,10 +4,10 @@ import { GoComment } from 'react-icons/go';
 import { BiUserPlus } from 'react-icons/bi';
 import styles from './GoalCard.module.scss';
 import Link from 'next/link';
-import { useUserContext } from '@lib/context/user';
 import Like from '@components/UI/Like/Like';
-import { updateGoalLikes } from '@lib/firebase';
 import { useArray } from '@lib/hooks';
+
+const updateGoalLikes = () => {};
 
 export interface UserSmall {
   id: string;
@@ -33,9 +33,8 @@ interface GoalCardProps {
 const GoalCard: React.FC<GoalCardProps> = ({
   goal: { description, user, commentsCount, id, likes, image },
 }) => {
-  const { user: loggedUser } = useUserContext();
   const { data: goalLikes, set } = useArray(likes ?? []);
-
+  const loggedUser = null;
   const like = async () => {
     if (loggedUser) {
       const goalsLikesCopy = [...goalLikes, loggedUser.id];

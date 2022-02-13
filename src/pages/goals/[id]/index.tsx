@@ -1,11 +1,21 @@
-import type { NextPage } from 'next';
+import type { InferGetServerSidePropsType, NextPage } from 'next';
+import type { Category, Step } from '@prisma/client';
+import { getSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { useLoadFIreBaseDocument } from '@lib/hooks';
-import { Goal } from '@lib/modals';
-import type { Timestamp } from 'firebase/firestore';
-import { formatDate, getDateToDateToNow } from 'utils/date';
+import { formatDate, getDateToDateToNow } from '@utils/date';
 import { Steps } from '@components/Goals';
 import Link from 'next/link';
+import { client } from '@lib/client';
+
+interface GoalPageProps {
+  goalData: {
+    title: string;
+    description: string;
+    estimatedCompletionDate: string;
+    categories: Category[];
+    steps: Step[];
+  };
+}
 
 const Label: React.FC<{ title: string }> = ({ title, children }) => (
   <div>
@@ -15,15 +25,15 @@ const Label: React.FC<{ title: string }> = ({ title, children }) => (
     <dl style={{ marginBottom: 'var(--spacing-2)' }}>{children}</dl>
   </div>
 );
-const ShowGoal: NextPage = () => {
+const ShowGoal: InferGetServerSidePropsType<typeof getServerSideProps> = ({
+  goalData,
+}) => {
   const { query } = useRouter();
-  const { document, error, isLoading } = useLoadFIreBaseDocument<Goal>(
-    'goals',
-    query.id as string
-  );
-  const getCompletionDate = (timeStamp: Timestamp | null): Date | null => {
+
+  const getCompletionDate = (timeStamp: number): number | null => {
+    // add formatting
     if (!timeStamp) return null;
-    return estimatedCompletionDate?.toDate() ?? null;
+    return getDateToDateToNow(new Date(+timeStamp));
   };
   const {
     title,
@@ -31,8 +41,9 @@ const ShowGoal: NextPage = () => {
     estimatedCompletionDate = null,
     categories = [],
     steps = [],
-  } = document ?? {};
-  if (isLoading) return <div>Loading...</div>;
+  } = goalData ?? {};
+  console.log(estimatedCompletionDate);
+  console.log(new Date(+estimatedCompletionDate));
   return (
     <div>
       <h1 style={{ marginBottom: 'var(--spacing-3)' }}>{title}</h1>
@@ -40,10 +51,10 @@ const ShowGoal: NextPage = () => {
         <p>{description}</p>
       </Label>
       <Label title="Estimated Completion Date">
-        {formatDate(getCompletionDate(estimatedCompletionDate))}
+        {formatDate(new Date(+estimatedCompletionDate))}
       </Label>
       <Label title="Estimated Remaining Time">
-        {getDateToDateToNow(getCompletionDate(estimatedCompletionDate))}
+        {getCompletionDate(estimatedCompletionDate)}
       </Label>
       <Label title="Steps">
         <Steps steps={steps} />
@@ -58,3 +69,49 @@ const ShowGoal: NextPage = () => {
 };
 
 export default ShowGoal;
+
+export async function getServerSideProps(ctx) {
+  const { userId: currentUserId } = (await getSession(ctx)) ?? { userId: '' };
+  const { query } = ctx;
+  const { id } = query ?? '';
+  if (!id) return { props: { goalData: null } };
+  try {
+    const data = await client.getGoal({ id });
+    const { goal } = data ?? {};
+    const {
+      title,
+      description,
+      steps,
+      categories,
+      estimatedCompletionDate,
+      user: { id: goalOwner },
+    } = goal;
+
+    if (currentUserId !== goalOwner) {
+      return {
+        notFound: true,
+        props: {
+          goalData: {},
+        },
+      };
+    }
+    return {
+      props: {
+        goalData: {
+          title,
+          description,
+          steps,
+          categories,
+          estimatedCompletionDate,
+        },
+      },
+    };
+  } catch (error) {
+    return {
+      notFound: true,
+      props: {
+        goalData: {},
+      },
+    };
+  }
+}

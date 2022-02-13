@@ -34,3 +34,14 @@ export const updateComment = gql`
         }
     }
     `;
+
+export const createGoal = gql`
+    mutation createGoal($title:String!, $description:String!, $estimatedCompletionDate:String!,$steps:[createStepInput]!,categories:[createCategoryInput]!) { createGoal(title:$title, description:$description, estimatedCompletionDate:$estimatedCompletionDate, steps:$steps,categories:$categories) {
+        id
+        title
+        description
+        estimatedCompletionDate
+        }
+    } 
+    
+    `;

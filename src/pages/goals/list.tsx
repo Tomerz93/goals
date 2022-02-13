@@ -12,29 +12,25 @@ import GenericList from '@components/UI/GenericList/GenericList';
 import GoalListCard from '@components/Goals/GoalListCard/GoalListCard';
 import { client } from '../../../lib/client';
 import { useQuery } from 'react-query';
-
-interface Goal {
-  completed: boolean;
-  title: string;
-}
+import type { Goal } from 'prisma/prisma-client';
 
 type sortGoalReturnType =
-  | { inProgress: []; completed: [] }
-  | { inProgress: []; completed: Goal[] }
-  | { inProgress: Goal[]; completed: [] }
-  | { inProgress: Goal[]; completed: [] };
+  | { inProgress: []; isCompleted: [] }
+  | { inProgress: []; isCompleted: Goal[] }
+  | { inProgress: Goal[]; isCompleted: [] }
+  | { inProgress: Goal[]; isCompleted: [] };
 
 const sortGoals = (goals: Goal[]) =>
   goals.length > 0
     ? goals.reduce(
         (acc, curr) => {
-          if (curr.completed) acc.completed.push(curr);
+          if (curr.isCompleted) acc.isCompleted.push(curr);
           else acc.inProgress.push(curr);
           return acc;
         },
-        { inProgress: [], completed: [] }
+        { inProgress: [], isCompleted: [] }
       )
-    : { inProgress: [], completed: [] };
+    : { inProgress: [], isCompleted: [] };
 
 const GoalList: React.FC<{ goals: Goal[] }> = ({ goals }) => (
   <GenericList
@@ -48,11 +44,11 @@ const GoalList: React.FC<{ goals: Goal[] }> = ({ goals }) => (
 
 const Feed: NextPage = () => {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const [goals, setGoals] = useState<{ inProgress: []; completed: [] }>({
+  const [goals, setGoals] = useState<{ inProgress: []; isCompleted: [] }>({
     inProgress: [],
-    completed: [],
+    isCompleted: [],
   });
-  const { inProgress, completed } = goals;
+  const { inProgress, isCompleted } = goals;
   const { data, status } = useQuery('goalList', () => client.goalList(), {
     onSuccess: (data) => {
       const { goals } = data;
@@ -73,7 +69,7 @@ const Feed: NextPage = () => {
             <GoalList goals={inProgress} />
           </TabPanel>
           <TabPanel>
-            <GoalList goals={completed} />
+            <GoalList goals={isCompleted} />
           </TabPanel>
         </TabsPanelList>
       </Tabs>

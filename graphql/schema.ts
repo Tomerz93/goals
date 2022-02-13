@@ -3,6 +3,7 @@ import { join } from 'path'
 import * as types from './types'
 
 export const schema = makeSchema({
+
     types,
     outputs: {
         typegen: join(process.cwd(), 'node_modules', '@types', 'nexus-typegen', 'index.d.ts'),
@@ -12,4 +13,12 @@ export const schema = makeSchema({
         export: 'Context',
         module: join(process.cwd(), 'graphql', 'context.ts'),
     },
+    sourceTypes: {
+        modules: [
+            {
+                module: '@prisma/client',
+                alias: 'prisma'
+            }
+        ]
+    }
 })

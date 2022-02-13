@@ -32,6 +32,7 @@ model Category {
   id    String              @id @default(cuid())
   title String
   value String
+  category String @default("")
   users User[]
   goals Goal[]
 }
@@ -52,6 +53,7 @@ model Goal {
   userId      String
   isCompleted Boolean   @default(false)
   createdAt   DateTime  @default(now())
+  estimatedCompletionDate DateTime @default(now())
   title       String    @db.VarChar(255)
   updatedAt   DateTime  @updatedAt
   description String

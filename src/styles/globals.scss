@@ -191,6 +191,20 @@ button {
   margin-inline-start: auto;
 }
 
+.mobile-only {
+  display: initial;
+  @media (min-width: 980px) {
+    display: none;
+  }
+}
+
+.desktop-only {
+  display: none;
+  @media (min-width: 980px) {
+    display: flex;
+  }
+}
+
 $spacing: (
   '1': var(--spacing-1),
   '2': var(--spacing-2),

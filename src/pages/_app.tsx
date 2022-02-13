@@ -3,10 +3,8 @@ import '../styles/globals.scss';
 import '../styles/index.scss';
 import type { AppProps } from 'next/app';
 import { ThemeProvider } from 'next-themes';
-import { AuthProvider } from '@lib/context/auth';
 import { Layout } from '@components/UI';
 import AuthCheck from '@components/AuthCheck/AuthCheck';
-import { UserProvider } from '@lib/context/user';
 import { SessionProvider } from 'next-auth/react';
 import { Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
@@ -24,21 +22,17 @@ const MyApp = ({
       <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps.dehydratedState}>
           <ThemeProvider>
-            <AuthProvider>
-              <UserProvider>
-                <AppLayout>
-                  <Provider>
-                    {Component.isProtected ? (
-                      <AuthCheck>
-                        <Component {...pageProps} />
-                      </AuthCheck>
-                    ) : (
-                      <Component {...pageProps} />
-                    )}
-                  </Provider>
-                </AppLayout>
-              </UserProvider>
-            </AuthProvider>
+            <AppLayout>
+              <Provider>
+                {Component.isProtected ? (
+                  <AuthCheck>
+                    <Component {...pageProps} />
+                  </AuthCheck>
+                ) : (
+                  <Component {...pageProps} />
+                )}
+              </Provider>
+            </AppLayout>
           </ThemeProvider>
         </Hydrate>
       </QueryClientProvider>

@@ -9,7 +9,6 @@ import {
   MdGames,
   MdOutlineLogout,
 } from 'react-icons/md';
-import { logout } from '@lib/firebase';
 
 const { GOAL_LIST, GOAL_STATS } = GOALS_ROUTES;
 const { USER_CATEGORIES, USER_SETTINGS } = USER_ROUTES;
@@ -48,7 +47,7 @@ const NavigationLinks: React.FC<{
       </div>
     </Link>
     <div>
-      <Button variant="styleless" handleOnClick={logout}>
+      <Button variant="styleless" handleOnClick={() => {}}>
         <MdOutlineLogout />
         Logout
       </Button>

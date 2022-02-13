@@ -3,8 +3,8 @@
 
 
 type Category {
+  category: String
   goal: Goal
-  goalId: String
   id: String
   title: String
   user: User
@@ -24,25 +24,38 @@ type Goal {
   categories: [Category]
   comments: [Comment]
   description: String
+  estimatedCompletionDate: String
   id: String
   isCompleted: Boolean
+  steps: [Step]
   title: String
   user: User
 }
 
 type Mutation {
   addComment(content: String!, goalId: String!, userId: String!): Comment!
-  createGoal(category: String!, description: String!, title: String!): Goal
+  createGoal(categories: [createCategoryInput]!, description: String!, estimatedCompletionDate: String!, steps: [createStepInput]!, title: String!): Goal!
   createUsername(username: String!): User!
   removeComment(id: String!): Comment
   updateComment(content: String!, id: String!): Comment
 }
 
 type Query {
+  allGoals: [Goal]!
   comments: [Comment]!
   goal(id: String!): Goal
   goals: [Goal]!
+  user(username: String!): User
   users: [User]!
+}
+
+type Step {
+  description: String
+  goal: Goal
+  goalId: String
+  id: String
+  isCompleted: Boolean
+  title: String
 }
 
 type User {
@@ -52,4 +65,17 @@ type User {
   image: String
   name: String
   username: String
+}
+
+input createCategoryInput {
+  category: String
+  id: String
+  title: String
+  value: String
+}
+
+input createStepInput {
+  description: String
+  isCompleted: Boolean
+  title: String
 }

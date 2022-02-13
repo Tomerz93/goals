@@ -1,7 +1,7 @@
 import { FlexContainer } from '@components/UI';
-import { Goal } from '@lib/modals';
-import styles from './GoalListCard.module.scss';
 import { useRouter } from 'next/router';
+import { Goal } from 'prisma/prisma-client';
+import styles from './GoalListCard.module.scss';
 
 interface GoalListCardProps {
   goal: Goal;
@@ -22,7 +22,7 @@ const Circle: React.FC<CircleProps> = ({ isCompleted }) => (
 );
 
 const GoalListCard: React.FC<GoalListCardProps> = ({
-  goal: { title, completed, id },
+  goal: { title, isCompleted, id },
 }) => {
   const router = useRouter();
   return (
@@ -33,7 +33,7 @@ const GoalListCard: React.FC<GoalListCardProps> = ({
       }}
     >
       <FlexContainer alignItems="center" gap="2">
-        <Circle isCompleted={completed} />
+        <Circle isCompleted={isCompleted} />
         <div className={styles.goalListCardContainer}>
           <p>{title}</p>
         </div>

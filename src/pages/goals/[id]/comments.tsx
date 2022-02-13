@@ -5,11 +5,12 @@ import { dehydrate, QueryClient, useQuery, useMutation } from 'react-query';
 import { GoalCard } from '@components/Goals';
 import { Button, Input, GenericList, Comment } from '@components/UI';
 import { useArray } from '@lib/hooks';
-import { client } from '../../../../lib/client';
+import { client } from '@lib/client';
 import { useSession } from 'next-auth/react';
 
 const Comments: React.FC = (props) => {
   const { data } = useSession();
+  console.log(data);
   const router = useRouter();
   const { id } = router.query;
 
@@ -133,18 +134,16 @@ const Comments: React.FC = (props) => {
           >
             Submit
           </Button>
-          {comments.length > 0 && (
-            <GenericList
-              component={Comment}
-              resourceName="comment"
-              items={comments}
-              otherProps={{
-                currentUserId: userId,
-                handleOnEdit: memoizedHandleOnEditComment,
-                handleOnRemoveComment: memoizedHandleOnRemoveComment,
-              }}
-            />
-          )}
+          {comments?.length > 0 &&
+            comments.map((comment) => (
+              <Comment
+                key={comment.id}
+                comment={comment}
+                currentUserId={userId}
+                handleOnEdit={memoizedHandleOnEditComment}
+                handleOnRemoveComment={memoizedHandleOnRemoveComment}
+              />
+            ))}
         </div>
       )}
     </>

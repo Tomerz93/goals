@@ -2,15 +2,17 @@ import type { NextPage } from 'next';
 import styles from './index.module.scss';
 import { GoalCard } from '@components/Goals';
 import GenericList from '@components/UI/GenericList/GenericList';
-import { client } from '../../../lib/client';
+import { client } from '@lib/client';
 import { useQuery } from 'react-query';
 
 const Feed: NextPage = () => {
-  const { data: { goals = null } = {}, isLoading } = useQuery('allGoals', () =>
-    client.allGoals()
-  );
-
+  const {
+    data: { allGoals: goals } = {},
+    isLoading,
+    error,
+  } = useQuery('allGoals', () => client.getAllGoals());
   if (isLoading || !goals) return <div>Loading...</div>;
+
   return (
     <div className={`${styles.feedContainer} mt-5`}>
       <div>

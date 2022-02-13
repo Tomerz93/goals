@@ -2,7 +2,7 @@
 import { PrismaClient } from '@prisma/client'
 import { Session } from 'next-auth'
 import { getSession } from 'next-auth/react'
-import prisma from '../src/lib/prisma'
+import prisma from '../lib/prisma'
 
 interface SessionWithUserId extends Session {
     userId?: string

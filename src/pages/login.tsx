@@ -40,13 +40,14 @@ Login.Layout = LayoutWithoutHeader;
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const providers = await getProviders();
   const session = await getSession({ req });
-  const { user = null } = session ?? {};
+  const { user = null, username } = session ?? {};
+
   if (!user) {
     return {
       props: { providers },
     };
   }
-  if (user && !user.username) {
+  if (user && !username) {
     return {
       redirect: {
         destination: USER_ROUTES.USER_CREATE,

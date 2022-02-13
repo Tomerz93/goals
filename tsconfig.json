@@ -16,11 +16,12 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
+      "@utils/*": ["src/utils/*"],
       "@data/*": ["./src/data/*"],
       "@graphql/*": ["./graphql/*"],
       "@prisma/*": ["./prisma/*"],
       "@components/*": ["./src/components/*"],
-      "@lib/*": ["./src/lib/*"],
+      "@lib/*": ["./lib/*"],
       "@type/*": ["./src/type/*"]
     }
   },

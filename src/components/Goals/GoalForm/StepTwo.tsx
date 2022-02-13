@@ -45,14 +45,14 @@ interface StepTwoProps {
   handleOnSubmit: (data: any, index: number) => void;
 }
 const StepTwo: React.FC<StepTwoProps> = ({
-  defaultValues = null,
+  defaultValues = [],
   handleOnSubmit,
 }) => {
   const [inputs, setInputs] = useState(
     defaultValues
       ? defaultValues?.map(({ description, title }) => ({
           [TITLE]: {
-            value: title.value,
+            value: title,
             placeholder: '',
             error: '',
             isDirty: false,
@@ -61,7 +61,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
             validations: [getIsNotMinLength(3)],
           },
           [DESCRIPTION]: {
-            value: description.value,
+            value: description,
             placeholder: '',
             error: '',
             isDirty: false,
@@ -72,6 +72,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
         }))
       : [getInputGroup()]
   );
+
   const {
     updateFormData,
     onPreviousStep: goBack,
@@ -102,7 +103,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
   const handleOnRemove = (index: number) =>
     setInputs(inputs.filter((_, i) => i !== index));
 
-  const isFormValid = inputs.every(
+  const isFormValid = inputs?.every(
     ({ description, title }) =>
       description.value && title.value && !description.error && !title.error
   );

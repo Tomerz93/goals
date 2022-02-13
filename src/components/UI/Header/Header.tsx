@@ -1,4 +1,6 @@
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import styles from './Header.module.scss';
 import { MdOutlineExplore, MdOutlineAdd } from 'react-icons/md';
 import { CgProfile } from 'react-icons/cg';
@@ -13,11 +15,13 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ openDrawer }) => {
   const router = useRouter();
   const { pathname } = router;
+  const { data } = useSession();
+  const { user = null, username = '', image = '' } = data ?? {};
   return (
     <header className={styles.Header}>
       <span>Logo</span>
       <FlexContainer alignItems="center" justifyContent="center">
-        <div>
+        <div className="mobile-only">
           <CgProfile
             onClick={() => {
               openDrawer();
@@ -42,6 +46,18 @@ const Header: React.FC<HeaderProps> = ({ openDrawer }) => {
             <MdOutlineAdd />
           </Link>
         </div>
+      </FlexContainer>
+      <FlexContainer className="desktop-only" alignItems="center">
+        <Image
+          src={user?.image ?? '/images/avatar.jpeg'}
+          alt="avatar"
+          width={40}
+          height={40}
+          layout="fixed"
+          className="round"
+          objectFit="cover"
+        />
+        <span>{username}</span>
       </FlexContainer>
     </header>
   );

@@ -1,4 +1,3 @@
-import type { Timestamp } from "firebase/firestore";
 import type { CategoryItem } from "@lib/modals/category";
 
 export interface Step {
@@ -13,7 +12,7 @@ export interface Goal {
     completed: boolean;
     title: string;
     description: string;
-    estimatedCompletionDate: Timestamp;
+    estimatedCompletionDate: string;
     steps: Step[]
     categories: CategoryItem[]
 }
