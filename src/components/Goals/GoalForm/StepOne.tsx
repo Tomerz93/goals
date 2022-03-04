@@ -7,9 +7,9 @@ import { useArray } from '@lib/hooks';
 import styles from './StepOne.module.scss';
 import { StepNavigator } from '.';
 import { useFormContext } from '@lib/context/form';
-import { CATEGORIES } from '@data/categories';
 import { getIsMinLength } from '@utils/index';
-import { fromUnixTime, format } from 'date-fns';
+import { useQuery } from 'react-query';
+import { client } from '@lib/client';
 
 interface StepOneProps {
   defaultValues?: Partial<Goal>;
@@ -21,12 +21,12 @@ const StepOne: React.FC<StepOneProps> = ({ defaultValues }) => {
     push,
     removeById,
     exists,
-    set: setCategories,
+    set: setSelectedCategories,
   } = useArray<CategoryItem>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [categories, setCategories] = useState([]);
   const {
     register,
-    handleSubmit,
     getValues,
     setValue,
     formState: { errors, isValid },
@@ -34,9 +34,13 @@ const StepOne: React.FC<StepOneProps> = ({ defaultValues }) => {
   // handle repopulate form fields and creation of step elements
 
   const { onNextStep: goToNextStep, currentStepData } = useFormContext();
+  useQuery('allGoals', () => client.getCategories(), {
+    onSuccess: ({ categories = [] }) => {
+      setCategories(categories);
+    },
+  });
   useEffect(() => {
     if (currentStepData || defaultValues) {
-      console.log('here');
       const { title, description, categories, estimatedCompletionDate } =
         currentStepData || defaultValues;
       setValue('title', title, { shouldValidate: true });
@@ -44,7 +48,7 @@ const StepOne: React.FC<StepOneProps> = ({ defaultValues }) => {
         shouldValidate: true,
       });
       setValue('description', description, { shouldValidate: true });
-      setCategories(categories);
+      setSelectedCategories(categories);
     }
   }, [currentStepData]);
 
@@ -68,10 +72,10 @@ const StepOne: React.FC<StepOneProps> = ({ defaultValues }) => {
   };
   const filteredCategories = useMemo(
     () =>
-      CATEGORIES.filter(({ title }) =>
+      categories.filter(({ title }) =>
         title.toLowerCase().includes(searchTerm.toLowerCase())
       ),
-    [searchTerm]
+    [searchTerm, categories]
   );
   return (
     <div>

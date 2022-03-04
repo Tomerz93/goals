@@ -4,8 +4,6 @@ import type { Goal } from '@lib/modals';
 import { StepOne, StepTwo } from '@components/Goals/GoalForm';
 import { FormProvider, useFormContext } from '@lib/context/form';
 import { client } from '@lib/client';
-import { formatDate } from '@utils/date';
-import format from 'date-fns/format';
 import { useMutation } from 'react-query';
 
 interface CreateGoalProps {
@@ -44,13 +42,21 @@ const CreateGoal: NextPage<CreateGoalProps> = ({
       description,
       steps,
       estimatedCompletionDate,
+      categories,
     }: {
       title: string;
       description: string;
+      categories: any;
       steps: any;
       estimatedCompletionDate: string;
     }) =>
-      client.createGoal({ title, description, steps, estimatedCompletionDate })
+      client.createGoal({
+        title,
+        description,
+        steps,
+        estimatedCompletionDate,
+        categories,
+      })
   );
 
   const STEP_TEXTS = ['Create Goal', 'Add Steps'];

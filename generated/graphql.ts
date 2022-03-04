@@ -19,7 +19,6 @@ export type Category = {
   __typename?: 'Category';
   category?: Maybe<Scalars['String']>;
   goal?: Maybe<Goal>;
-  goalId?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['String']>;
   title?: Maybe<Scalars['String']>;
   user?: Maybe<User>;
@@ -55,6 +54,7 @@ export type Mutation = {
   createGoal: Goal;
   createUsername: User;
   removeComment?: Maybe<Comment>;
+  removeGoal: Goal;
   updateComment?: Maybe<Comment>;
 };
 
@@ -67,6 +67,7 @@ export type MutationAddCommentArgs = {
 
 
 export type MutationCreateGoalArgs = {
+  categories: Array<InputMaybe<CreateCategoryInput>>;
   description: Scalars['String'];
   estimatedCompletionDate: Scalars['String'];
   steps: Array<InputMaybe<CreateStepInput>>;
@@ -84,6 +85,11 @@ export type MutationRemoveCommentArgs = {
 };
 
 
+export type MutationRemoveGoalArgs = {
+  id: Scalars['String'];
+};
+
+
 export type MutationUpdateCommentArgs = {
   content: Scalars['String'];
   id: Scalars['String'];
@@ -92,6 +98,7 @@ export type MutationUpdateCommentArgs = {
 export type Query = {
   __typename?: 'Query';
   allGoals: Array<Maybe<Goal>>;
+  categories: Array<Maybe<Category>>;
   comments: Array<Maybe<Comment>>;
   goal?: Maybe<Goal>;
   goals: Array<Maybe<Goal>>;
@@ -127,6 +134,13 @@ export type User = {
   image?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
   username?: Maybe<Scalars['String']>;
+};
+
+export type CreateCategoryInput = {
+  category?: InputMaybe<Scalars['String']>;
+  id?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
+  value?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateStepInput = {
@@ -171,10 +185,18 @@ export type CreateGoalMutationVariables = Exact<{
   description: Scalars['String'];
   estimatedCompletionDate: Scalars['String'];
   steps: Array<InputMaybe<CreateStepInput>> | InputMaybe<CreateStepInput>;
+  categories: Array<InputMaybe<CreateCategoryInput>> | InputMaybe<CreateCategoryInput>;
 }>;
 
 
 export type CreateGoalMutation = { __typename?: 'Mutation', createGoal: { __typename?: 'Goal', id?: string | null | undefined, title?: string | null | undefined, description?: string | null | undefined, estimatedCompletionDate?: string | null | undefined } };
+
+export type RemoveGoalMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type RemoveGoalMutation = { __typename?: 'Mutation', removeGoal: { __typename?: 'Goal', id?: string | null | undefined } };
 
 export type GetAllGoalsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -199,6 +221,11 @@ export type GetUserQueryVariables = Exact<{
 
 
 export type GetUserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id?: string | null | undefined, username?: string | null | undefined, image?: string | null | undefined, goals?: Array<{ __typename?: 'Goal', id?: string | null | undefined, title?: string | null | undefined, description?: string | null | undefined, isCompleted?: boolean | null | undefined } | null | undefined> | null | undefined } | null | undefined };
+
+export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetCategoriesQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', id?: string | null | undefined, title?: string | null | undefined, category?: string | null | undefined, value?: string | null | undefined } | null | undefined> };
 
 
 export const CreateUsernameDocument = gql`
@@ -233,17 +260,25 @@ export const UpdateCommentDocument = gql`
 }
     `;
 export const CreateGoalDocument = gql`
-    mutation createGoal($title: String!, $description: String!, $estimatedCompletionDate: String!, $steps: [createStepInput]!) {
+    mutation createGoal($title: String!, $description: String!, $estimatedCompletionDate: String!, $steps: [createStepInput]!, $categories: [createCategoryInput]!) {
   createGoal(
     title: $title
     description: $description
     estimatedCompletionDate: $estimatedCompletionDate
     steps: $steps
+    categories: $categories
   ) {
     id
     title
     description
     estimatedCompletionDate
+  }
+}
+    `;
+export const RemoveGoalDocument = gql`
+    mutation removeGoal($id: String!) {
+  removeGoal(id: $id) {
+    id
   }
 }
     `;
@@ -321,6 +356,16 @@ export const GetUserDocument = gql`
   }
 }
     `;
+export const GetCategoriesDocument = gql`
+    query getCategories {
+  categories {
+    id
+    title
+    category
+    value
+  }
+}
+    `;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string) => Promise<T>;
 
@@ -344,6 +389,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createGoal(variables: CreateGoalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateGoalMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateGoalMutation>(CreateGoalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createGoal');
     },
+    removeGoal(variables: RemoveGoalMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<RemoveGoalMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<RemoveGoalMutation>(RemoveGoalDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'removeGoal');
+    },
     getAllGoals(variables?: GetAllGoalsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetAllGoalsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetAllGoalsQuery>(GetAllGoalsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getAllGoals');
     },
@@ -355,6 +403,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     getUser(variables: GetUserQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetUserQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<GetUserQuery>(GetUserDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getUser');
+    },
+    getCategories(variables?: GetCategoriesQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<GetCategoriesQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<GetCategoriesQuery>(GetCategoriesDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'getCategories');
     }
   };
 }

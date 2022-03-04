@@ -74,13 +74,14 @@ query getUser($username: String!) {
   }
 }
 `
-// export const getCategories = gql`
-// query getCategories {
-//  categories
-//  {
-//     title
-//     category
-//     value
-//   }
-// }
-// `
+export const getCategories = gql`
+query getCategories {
+ categories
+ {
+    id
+    title
+    category
+    value
+  }
+}
+`

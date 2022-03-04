@@ -37,11 +37,14 @@ type Mutation {
   createGoal(categories: [createCategoryInput]!, description: String!, estimatedCompletionDate: String!, steps: [createStepInput]!, title: String!): Goal!
   createUsername(username: String!): User!
   removeComment(id: String!): Comment
+  removeGoal(id: String!): Goal!
   updateComment(content: String!, id: String!): Comment
+  updateGoal(categories: [createCategoryInput]!, description: String!, estimatedCompletionDate: String!, id: String!, steps: [createStepInput]!, title: String!): Goal!
 }
 
 type Query {
   allGoals: [Goal]!
+  categories: [Category]!
   comments: [Comment]!
   goal(id: String!): Goal
   goals: [Goal]!

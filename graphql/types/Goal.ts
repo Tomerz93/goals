@@ -69,7 +69,13 @@ export const GetGoals = extendType({
         t.nonNull.list.field('allGoals', {
             type: 'Goal',
             async resolve(_parent, _args, ctx) {
-                return await ctx.prisma.goal.findMany()
+                return await ctx.prisma.goal.findMany({
+                    include: {
+                        _count: {
+                            select: { comments: true }
+                        }
+                    }
+                })
             },
         })
         t.nonNull.list.field('goals', {
@@ -139,14 +145,65 @@ export const createGoal = extendType({
                             }))
                         },
                         categories: {
-                            connect: {
-                                id: args?.categories?.map(category => category?.id)
-                            }
+                            connect:
+                                args?.categories?.map(category => ({ id: category?.id })) ?? []
                         }
 
                     },
                 })
             },
-        })
+        }),
+            // t.nonNull.field('updateGoal', {
+            //     type: 'Goal',
+            //     args: {
+            //         id: nonNull(stringArg()),
+            //         title: nonNull(stringArg()),
+            //         description: nonNull(stringArg()),
+            //         estimatedCompletionDate: nonNull(stringArg()),
+            //         steps: nonNull(list(arg({ type: createStepInput }))),
+            //         categories: nonNull(list(arg({ type: createCategoryInput })))
+            //     },
+            //     async resolve(_parent, args, ctx) {
+            //         return await ctx.prisma.goal.update({
+            //             where: {
+            //                 id: args.id
+            //             },
+            //             data: {
+            //                 title: args.title,
+            //                 estimatedCompletionDate: args.estimatedCompletionDate,
+            //                 description: args.description,
+            //                 user: {
+            //                     connect: {
+            //                         id: ctx?.session?.userId
+            //                     }
+            //                 },
+            //                 steps: {
+            //                     set: args.steps.map(step => ({
+            //                         title: step?.title,
+            //                         description: step?.description,
+            //                     }))
+            //                 },
+            //                 categories: {
+            //                     connectOrCreate: args?.categories?.map(category => ({ id: category?.id })) ?? [],
+            //                 }
+
+            //             },
+            //         })
+            //     }
+            // }),
+            t.nonNull.field('removeGoal', {
+                type: 'Goal',
+                args: {
+                    id: nonNull(stringArg()),
+                },
+                async resolve(_, { id }, { prisma }) {
+                    return await prisma.goal.delete({
+                        where: {
+                            id,
+                        },
+                    })
+                }
+
+            })
     }
 })

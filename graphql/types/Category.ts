@@ -1,4 +1,4 @@
-import { objectType, extendType, queryType, inputObjectType } from 'nexus'
+import { objectType, extendType, inputObjectType } from 'nexus'
 import { User } from './User'
 import { Goal } from './Goal'
 
@@ -46,15 +46,15 @@ export const createCategoryInput = inputObjectType({
     }
 });
 
-// export const categoriesQuery = extendType({
-//     type: 'Query',
-//     definition(t) {
-//         t.nonNull.list.field('categories', {
-//             type: Category,
-//             async resolve(_, __, ctx) {
-//                 return await ctx.prisma.category.findMany()
-//             },
-//         })
-//     },
-// })
+export const categoriesQuery = extendType({
+    type: 'Query',
+    definition(t) {
+        t.nonNull.list.field('categories', {
+            type: Category,
+            async resolve(_, __, ctx) {
+                return await ctx.prisma.category.findMany()
+            },
+        })
+    },
+})
 

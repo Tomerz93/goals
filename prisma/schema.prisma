@@ -24,8 +24,8 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  goal      Goal     @relation(fields: [goalId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  goal      Goal     @relation(fields: [goalId], references: [id] , onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id] , onDelete: Cascade)
 }
 
 model Category {
@@ -45,7 +45,7 @@ model Step {
   goalId      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  goal        Goal     @relation(fields: [goalId], references: [id])
+  goal        Goal     @relation(fields: [goalId], references: [id], onDelete: Cascade)
 }
 
 model Goal {
