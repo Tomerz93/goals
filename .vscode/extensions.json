@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "aaron-bond.better-comments",
+    "dbaeumer.vscode-eslint",
+    "wesbos.theme-cobalt2"
+  ]
+}

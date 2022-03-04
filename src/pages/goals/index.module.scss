@@ -1,0 +1,9 @@
+.feedContainer {
+  grid-column: 2/12;
+}
+@media (min-width: 768px) {
+  .feedContainer {
+    grid-column: 3/ 11;
+    margin-inline: auto;
+  }
+}

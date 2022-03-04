@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Goal" ADD COLUMN     "estimatedCompletionDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

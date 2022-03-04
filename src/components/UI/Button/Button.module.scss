@@ -1,0 +1,49 @@
+.btn {
+  padding: var(--btn-padding-horizontal) var(--btn-padding-vertical);
+  display: flex;
+  align-items: center;
+  svg {
+    margin-right: 5px;
+  }
+  &:disabled {
+    // TODO add a variable for disabled state
+    background-color: rgb(172, 170, 170);
+    color: #333;
+  }
+  font-size: var(--fs-300);
+}
+.btnStyleless {
+  background: transparent;
+}
+.btnPrimary {
+  background-color: var(--primary);
+  color: #fff;
+  &:hover {
+    //   background-color: darken(var(--primary), 5%);
+  }
+}
+.btnGradient {
+  background-image: linear-gradient(to right, var(--primary), var(--secondary));
+  color: #fff;
+  &:hover {
+    //   background-color: darken(var(--primary), 5%);
+  }
+}
+.btnSelected {
+  border: 1px solid #fff;
+}
+.btnMinimal {
+  background-color: transparent;
+  color: #fff;
+}
+.btnTab {
+  background: transparent;
+  color: var(--lightest-gray);
+  border: 0;
+  padding-block-end: var(--spacing-2);
+  &.btnSelected {
+    font-weight: bold;
+    border-bottom: 1px solid var(--lightest-blue);
+    color: var(--lightest-blue);
+  }
+}

@@ -1,0 +1,261 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap');
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+:root {
+  --dark-green-clr: 203 33% 22%;
+  /* color definitions */
+  --white: #fff;
+  --red: hsl(0, 61%, 65%);
+  --purple: hsl(263, 82%, 32%);
+  --green: hsl(130, 34%, 51%);
+  --dark-green: hsl(var(--dark-green-clr));
+  --faded-gray: hsl(209, 20%, 33%);
+  --lightest-gray: hsl(0, 0%, 93%);
+  --lightest-blue: hsl(205, 93%, 84%);
+  --light-blue: hsl(216, 78%, 47%);
+  --dark-blue: hsl(203, 36%, 13%);
+  --light-gray: hsl(0, 0%, 96%);
+  --primary: var(--light-blue);
+  --secondary: var(--purple);
+  --danger: var(--red);
+  --success: var(--green);
+  --bg: var(--dark-blue);
+  --text-light: #fff;
+  --text-color: var(--text-light);
+  --text-dark: #333;
+
+  /* font-sizes */
+  --fs-900: 1.802rem;
+  --fs-800: 1.602rem;
+  --fs-700: 1.424rem;
+  --fs-600: 1.266rem;
+  --fs-500: 1.125rem;
+  --fs-400: 1.5rem;
+  --fs-300: 1rem;
+  --fs-200: 0.833rem;
+  --fs-100: 0.75rem;
+
+  /* font family  */
+  --sans-serif: 'Quicksand', sans-serif;
+
+  --spacing-1: 5px;
+  --spacing-2: 10px;
+  --spacing-3: 15px;
+  --spacing-4: 20px;
+  --spacing-5: 25px;
+  --spacing-6: 30px;
+  --spacing-6: 35px;
+
+  --btn-padding-vertical: var(--spacing-2);
+  --btn-padding-horizontal: var(--spacing-2);
+
+  --page-spacing: var(--spacing-4);
+
+  --screen-xs: 375px;
+  --screen-sm: 768px;
+  --screen-md: 980px;
+  --screen-lg: 1200px;
+  --screen-xl: 1600px;
+
+  --header-height: 70px;
+
+  --gap: var(--spacing-2);
+
+  // inputs
+  --input-bg: var(--faded-gray);
+}
+[data-theme='light'] {
+  --bg: white;
+  --text-color: #333;
+  --lightest-blue: hsl(198, 82%, 17%);
+  --input-bg: hsl(209, 20%, 21%);
+}
+html,
+body {
+  padding: 0;
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--sans-serif);
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--text-color);
+  background-color: var(--bg);
+  font-size: clamp(1rem, calc(var(--fs-100) + 1vw), 1.2rem);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+dl,
+dt,
+p {
+  margin: 0;
+  font-weight: 400;
+}
+p {
+  max-inline-size: 65ch;
+}
+ul {
+  padding: 0;
+  margin: 0;
+}
+li {
+  list-style: none;
+}
+
+p,
+a {
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: var(--fs-900);
+}
+
+h2 {
+  font-size: var(--fs-800);
+}
+
+h3 {
+  font-size: var(--fs-700);
+}
+
+h4 {
+  font-size: var(--fs-600);
+}
+
+h5 {
+  font-size: var(--fs-500);
+}
+
+small,
+.text_small {
+  font-size: 0.8rem;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  outline: none;
+  border: 0;
+  font-family: inherit;
+  font-size: inherit;
+}
+.flex {
+  display: flex;
+  &.column {
+    flex-direction: column;
+  }
+  &.row {
+    flex-direction: row;
+  }
+  &.wrap {
+    flex-wrap: wrap;
+  }
+  &.space-between {
+    justify-content: space-between;
+  }
+  &.justify-center {
+    justify-content: center;
+  }
+  &.justify-end {
+    justify-content: flex-end;
+  }
+  &.align-center {
+    align-items: center;
+  }
+}
+.round {
+  border-radius: 50%;
+}
+
+.h-100 {
+  height: 100%;
+}
+
+.ml-auto {
+  margin-inline-start: auto;
+}
+
+.mobile-only {
+  display: initial;
+  @media (min-width: 980px) {
+    display: none;
+  }
+}
+
+.desktop-only {
+  display: none;
+  @media (min-width: 980px) {
+    display: flex;
+  }
+}
+
+$spacing: (
+  '1': var(--spacing-1),
+  '2': var(--spacing-2),
+  '3': var(--spacing-3),
+  '4': var(--spacing-4),
+  '5': var(--spacing-5),
+  '6': var(--spacing-6),
+);
+
+$colors: (
+  'primary': var(--primary),
+  'secondary': var(--secondary),
+  'danger': var(--danger),
+  'success': var(--success),
+  'dark-green': var(--dark-green),
+  'faded-gray': var(--faded-gray),
+  'lightest-gray': var(--lightest-gray),
+  'lightest-blue': var(--lightest-blue),
+  'light-blue': var(--light-blue),
+  'dark-blue': var(--dark-blue),
+  'light-gray': var(--light-gray),
+  'bg': var(--bg),
+  'text-color': var(--text-color),
+);
+
+@each $size, $value in $spacing {
+  .mt-#{$size} {
+    margin-block-start: $value;
+  }
+  .mb-#{$size} {
+    margin-block-end: $value;
+  }
+  .mr-#{$size} {
+    margin-inline-end: $value;
+  }
+  .ml-#{$size} {
+    margin-inline-start: $value;
+  }
+  .mx-#{$size} {
+    margin-inline-start: $value;
+    margin-inline-end: $value;
+  }
+  .my-#{$size} {
+    margin-block-start: $value;
+    margin-block-end: $value;
+  }
+}
+
+@each $color, $value in $colors {
+  .variant-#{$color} {
+    background-color: $value;
+    color: var(--text-color);
+  }
+}

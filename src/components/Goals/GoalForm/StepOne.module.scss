@@ -1,0 +1,20 @@
+.categoryListContainer {
+  display: grid;
+  background-color: var(--input-bg);
+  max-block-size: 200px;
+  overflow-y: scroll;
+  color: var(--text-color);
+  > *:where(:not(:last-child)) {
+    border-bottom: #9ec9f1 2px solid;
+    padding-block-end: var(--spacing-2);
+  }
+  > * {
+    font-size: var(--fs-200);
+    padding: var(--spacing-2);
+    transition: background 0.2s ease-in-out;
+    cursor: pointer;
+    &:hover {
+      background-color: #2a3a48;
+    }
+  }
+}

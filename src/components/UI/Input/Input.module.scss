@@ -1,0 +1,35 @@
+.Input {
+  border: none;
+  width: 100%;
+  border-bottom: 2px solid #fff;
+  margin-block-start: var(--spacing-2);
+  background-color: var(--input-bg);
+  color: #fff;
+  transition: border 0.2s ease-in-out;
+  &:focus-visible {
+    outline: 0;
+  }
+  padding-block: var(--spacing-2);
+  &.Error {
+    border-bottom: 2px solid var(--danger);
+  }
+  &::placeholder {
+    color: rgb(202, 202, 202);
+  }
+}
+.textArea {
+  margin-block-start: var(--spacing-2);
+  background-color: var(--input-bg);
+  resize: none;
+  &:focus {
+    border-bottom: 1px solid var(--lightest-blue);
+  }
+}
+.Label {
+  display: block;
+  text-transform: capitalize;
+}
+.explanation {
+  font-size: var(--fs-200);
+  color: var(--lightest-gray);
+}
